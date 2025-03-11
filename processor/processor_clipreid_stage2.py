@@ -51,6 +51,8 @@ def do_train_stage2(cfg,
     
     loss_history = []
     accuracy_history = []
+    map_history = []
+    r1_history = []
     
     # train
     import time
