@@ -78,7 +78,7 @@ DATASETS:
 # OUTPUT_DIR: ''
 
   NAMES: ('msmt17')
-  ROOT_DIR: ('./dataset')
+  ROOT_DIR: ('./../dataset')
 OUTPUT_DIR: './output/dev'
 
 # CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml
