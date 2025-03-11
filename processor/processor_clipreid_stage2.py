@@ -170,9 +170,7 @@ def do_train_stage2(cfg,
     
     # evaluation graph 저장
     map_history = np.array(map_history)
-    print(map_history)
     r1_history = np.array(r1_history)
-    print(r1_history)
     fig, ax1 = plt.subplots(figsize=(8, 6))
 
     ax1.set_xlabel("eval steps")
