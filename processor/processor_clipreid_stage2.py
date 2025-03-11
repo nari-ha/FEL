@@ -141,7 +141,9 @@ def do_train_stage2(cfg,
             save_model(cfg, model, epoch)
 
         if epoch % eval_period == 0 and (not cfg.MODEL.DIST_TRAIN or dist.get_rank() == 0):
-            evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger)  # 모델 평가
+            mAP, r1 = evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger)  # 모델 평가
+            loss_history.append(mAP)
+            r1_history.append(r1)
 
     all_end_time = time.monotonic()
     total_time = timedelta(seconds=all_end_time - all_start_time)
@@ -165,6 +167,25 @@ def do_train_stage2(cfg,
     fig.suptitle("Stage2 Loss&Accuracy")
     fig.tight_layout()
     plt.savefig(os.path.join(cfg.OUTPUT_DIR, "stage2.png"))
+    
+    # evaluation graph 저장
+    map_history = np.array(map_history)
+    r1_history = np.array(r1_history)
+    fig, ax1 = plt.subplots(figsize=(8, 6))
+
+    ax1.set_xlabel("eval steps")
+    ax1.set_ylabel("mAP")
+    ax1.plot(range(1, (epochs/eval_period) + 1), loss_history, label="mAP", color='red', linewidth=2)
+    ax1.tick_params(axis='y', labelcolor='red')
+
+    ax2 = ax1.twinx()
+    ax2.set_ylabel("R1")
+    ax2.plot(range(1, (epochs/eval_period) + 1), accuracy_history, label="R1", color='green', linewidth=2)
+    ax2.tick_params(axis='y', labelcolor='green')
+
+    fig.suptitle("Stage2 Evaluation")
+    fig.tight_layout()
+    plt.savefig(os.path.join(cfg.OUTPUT_DIR, "eval.png"))
     
 def save_model(cfg, model, epoch):
     if cfg.MODEL.DIST_TRAIN and dist.get_rank() != 0:
@@ -191,6 +212,7 @@ def evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger):
         logger.info(f"CMC curve, Rank-{r:<3}:{cmc[r - 1]:.1%}")
     
     torch.cuda.empty_cache()
+    return mAP, cmc[0]
 
 def do_inference(cfg,
                  model,
