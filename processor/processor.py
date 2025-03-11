@@ -128,7 +128,7 @@ def do_train(cfg,
                                 target_view = target_view.to(device)
                             else: 
                                 target_view = None
-                            feat = model(img, cam_label=camids, view_label=target_view)
+                            feat = model(img, cam_label=camids, view_label=target_view, get_feat = True)
                             evaluator.update((feat, vid, camid))
                     cmc, mAP, _, _, _, _, _ = evaluator.compute()
                     logger.info("Validation Results - Epoch: {}".format(epoch))
@@ -149,7 +149,7 @@ def do_train(cfg,
                             target_view = target_view.to(device)
                         else: 
                             target_view = None
-                        feat = model(img, cam_label=camids, view_label=target_view)
+                        feat = model(img, cam_label=camids, view_label=target_view, get_feat = True)
                         evaluator.update((feat, vid, camid))
                 cmc, mAP, _, _, _, _, _ = evaluator.compute()
                 logger.info("Validation Results - Epoch: {}".format(epoch))
@@ -195,7 +195,7 @@ def do_inference(cfg,
                 target_view = target_view.to(device)
             else: 
                 target_view = None
-            feat = model(img, cam_label=camids, view_label=target_view)
+            feat = model(img, cam_label=camids, view_label=target_view, get_feat = True)
             evaluator.update((feat, pid, camid))
             img_path_list.extend(imgpath)
 

@@ -4,6 +4,7 @@ import numpy as np
 from .clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 _tokenizer = _Tokenizer()
 from timm.models.layers import DropPath, to_2tuple, trunc_normal_
+from .fel import BiAttentionBlock
 
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
@@ -86,6 +87,14 @@ class build_transformer(nn.Module):
         clip_model.to("cuda")
 
         self.image_encoder = clip_model.visual
+        self.feature_enhancer_layer = BiAttentionBlock(
+                v_dim=self.in_planes_proj,
+                l_dim=self.in_planes_proj,
+                embed_dim=self.in_planes_proj // 2,
+                num_heads=8//2,
+                dropout=0.1,
+                drop_path=0.0,
+        )
 
         if cfg.MODEL.SIE_CAMERA and cfg.MODEL.SIE_VIEW:
             self.cv_embed = nn.Parameter(torch.zeros(camera_num * view_num, self.in_planes))
@@ -104,7 +113,7 @@ class build_transformer(nn.Module):
         self.prompt_learner = PromptLearner(num_classes, dataset_name, clip_model.dtype, clip_model.token_embedding)
         self.text_encoder = TextEncoder(clip_model)
 
-    def forward(self, x = None, label=None, get_image = False, get_text = False, cam_label= None, view_label=None):
+    def forward(self, x = None, label=None, get_image = False, get_text = False, get_feat = False, cam_label= None, view_label=None):
         if get_text == True:
             prompts = self.prompt_learner(label) 
             text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
@@ -136,6 +145,21 @@ class build_transformer(nn.Module):
             img_feature_last = image_features_last[:,0]
             img_feature = image_features[:,0]
             img_feature_proj = image_features_proj[:,0]
+            
+        if get_feat == False and self.feature_enhancer_layer:
+            prompts = self.prompt_learner(label)
+            text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
+            # print("전: ", x.shape, text_features.shape)
+            # print("전: ", img_feature_proj.shape)
+            text_features = text_features.unsqueeze(1)
+            img_feature_proj = img_feature_proj.unsqueeze(1)
+            img_feature_proj, text_features = self.feature_enhancer_layer(
+                v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None
+                )
+            # print("후: ", img_feature_proj.shape)
+            # print("feature enhance layer", img_feature_proj.shape)
+            img_feature_proj = img_feature_proj.squeeze(1)
+            text_features = text_features.squeeze(1)
 
         feat = self.bottleneck(img_feature) 
         feat_proj = self.bottleneck_proj(img_feature_proj) 
