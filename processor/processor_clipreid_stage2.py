@@ -155,12 +155,12 @@ def do_train_stage2(cfg,
     fig, ax1 = plt.subplots(figsize=(8, 6))
 
     ax1.set_xlabel("Epoch")
-    ax1.set_ylabel("Loss", color='blue')
+    ax1.set_ylabel("Loss")
     ax1.plot(range(1, len(loss_history) + 1), loss_history, label="Loss", color='blue', linewidth=2)
     ax1.tick_params(axis='y', labelcolor='blue')
 
     ax2 = ax1.twinx()
-    ax2.set_ylabel("Accuracy", color='orange')
+    ax2.set_ylabel("Accuracy")
     ax2.plot(range(1, len(accuracy_history) + 1), accuracy_history, label="Accuracy", color='orange', linewidth=2)
     ax2.tick_params(axis='y', labelcolor='orange')
 
