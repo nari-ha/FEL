@@ -67,7 +67,7 @@ TEST:
 DATASETS:
   NAMES: ('market1501')
   ROOT_DIR: ('./../dataset')
-OUTPUT_DIR: './output'
+OUTPUT_DIR: './output/market1501'
 
 #   NAMES: ('dukemtmc')
 #   ROOT_DIR: ('')

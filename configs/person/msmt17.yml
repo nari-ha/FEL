@@ -67,7 +67,7 @@ TEST:
 DATASETS:
   NAMES: ('msmt17')
   ROOT_DIR: ('./../dataset')
-OUTPUT_DIR: './output'
+OUTPUT_DIR: './output/msmt17'
 
 #   NAMES: ('dukemtmc')
 #   ROOT_DIR: ('')
