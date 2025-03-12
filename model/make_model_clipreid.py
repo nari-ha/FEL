@@ -160,7 +160,7 @@ class build_transformer(nn.Module):
         #     # print("feature enhance layer", img_feature_proj.shape)
         #     img_feature_proj = img_feature_proj.squeeze(1)
         #     text_features = text_features.squeeze(1)
-        print("엥 이게되네 ㅋㅋ")
+        
         if get_feat == False and self.feature_enhancer_layer and label is not None:
 
             prompts = self.prompt_learner(label)

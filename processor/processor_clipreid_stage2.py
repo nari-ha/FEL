@@ -75,7 +75,7 @@ def do_train_stage2(cfg,
             with amp.autocast(enabled=True):
                 text_feature = model(label = l_list, get_text = True)
                 
-                text_feature = model.feature_enhancer_layer(  # BiAttentionBlock 적용
+                text_feature = model.feature_enhancer_layer(  # 텍스트 피처에도 fel 적용
                     v=text_feature.unsqueeze(1), l=text_feature.unsqueeze(1)
                 )[1].squeeze(1)
                 
@@ -106,7 +106,7 @@ def do_train_stage2(cfg,
                 target_view = None
             with amp.autocast(enabled=True):
                 score, feat, image_features = model(x = img, label = target, cam_label=target_cam, view_label=target_view)
-                logits = image_features @ text_features.t()
+                logits = image_features @ text_features.t() # 강화된 image feature랑 text feature로 계산 ㅋ
                 loss = loss_fn(score, feat, target, target_cam, logits)
 
             scaler.scale(loss).backward()
