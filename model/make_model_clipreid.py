@@ -146,23 +146,9 @@ class build_transformer(nn.Module):
             img_feature = image_features[:,0]
             img_feature_proj = image_features_proj[:,0]
             
-        # if get_feat == False and self.feature_enhancer_layer:
-        #     prompts = self.prompt_learner(label)
-        #     text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
-        #     # print("전: ", x.shape, text_features.shape)
-        #     # print("전: ", img_feature_proj.shape)
-        #     text_features = text_features.unsqueeze(1)
-        #     img_feature_proj = img_feature_proj.unsqueeze(1)
-        #     img_feature_proj, text_features = self.feature_enhancer_layer(
-        #         v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None
-        #         )
-        #     # print("후: ", img_feature_proj.shape)
-        #     # print("feature enhance layer", img_feature_proj.shape)
-        #     img_feature_proj = img_feature_proj.squeeze(1)
-        #     text_features = text_features.squeeze(1)
-        
+        print("엥 이게되네 ㅋㅋ")
         if get_feat == False and self.feature_enhancer_layer and label is not None:
-            print("진입했음")
+
             prompts = self.prompt_learner(label)
             text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
             
