@@ -162,6 +162,7 @@ class build_transformer(nn.Module):
         #     text_features = text_features.squeeze(1)
         
         if get_feat == False and self.feature_enhancer_layer and label is not None:
+            print("진입했음")
             prompts = self.prompt_learner(label)
             text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
             
