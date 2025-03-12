@@ -178,13 +178,20 @@ def do_train_stage2(cfg,
 
     ax1.set_xlabel("eval steps")
     ax1.set_ylabel("mAP", color='red')
-    ax1.plot(range(1, len(map_history) + 1), map_history, label="mAP", linewidth=2)
+    ax1.plot(range(1, len(map_history) + 1), map_history, label="mAP", linewidth=2, marker='o')
     ax1.tick_params(axis='y', labelcolor='red')
+    
+    for i, v in enumerate(map_history):
+        ax1.annotate(v, (i + 1, v), textcoords="offset points", xytext=(0, 5), ha='center', fontsize=6, color='red')
 
     ax2 = ax1.twinx()
     ax2.set_ylabel("R1", color='green')
     ax2.plot(range(1, len(r1_history) + 1), r1_history, label="R1", linewidth=2)
     ax2.tick_params(axis='y', labelcolor='green')
+    
+    for i, v in enumerate(r1):
+        ax2.annotate(v, (i + 1, v), textcoords="offset points", xytext=(0, 5), ha='center', fontsize=6, color='green')
+
 
     fig.suptitle("Stage2 Evaluation")
     fig.tight_layout()
