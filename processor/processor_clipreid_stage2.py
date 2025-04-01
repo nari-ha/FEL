@@ -154,48 +154,6 @@ def do_train_stage2(cfg,
     total_time = timedelta(seconds=all_end_time - all_start_time)
     logger.info("Total running time: {}".format(total_time))
     
-    # learning curve graph 저장
-    loss_history = np.array(loss_history)
-    accuracy_history = np.array([acc.cpu().numpy() if isinstance(acc, torch.Tensor) else acc for acc in accuracy_history])
-    fig, ax1 = plt.subplots(figsize=(8, 6))
-
-    ax1.set_xlabel("Epoch")
-    ax1.set_ylabel("Loss")
-    ax1.plot(range(1, len(loss_history) + 1), loss_history, label="Loss", color='blue', linewidth=2)
-    ax1.tick_params(axis='y', labelcolor='blue')
-
-    ax2 = ax1.twinx()
-    ax2.set_ylabel("Accuracy")
-    ax2.plot(range(1, len(accuracy_history) + 1), accuracy_history, label="Accuracy", color='orange', linewidth=2)
-    ax2.tick_params(axis='y', labelcolor='orange')
-
-    fig.suptitle("Stage2 Loss&Accuracy")
-    fig.tight_layout()
-    plt.savefig(os.path.join(cfg.OUTPUT_DIR, "stage2.png"))
-    
-    # evaluation graph 저장
-    fig, ax1 = plt.subplots(figsize=(8, 6))
-
-    ax1.set_xlabel("eval steps")
-    ax1.set_ylabel("mAP", color='red')
-    ax1.plot(range(1, len(map_history) + 1), map_history, label="mAP", linewidth=2, marker='o')
-    ax1.tick_params(axis='y', labelcolor='red')
-    
-    for i, v in enumerate(map_history):
-        ax1.annotate(v, (i + 1, v), textcoords="offset points", xytext=(0, 5), ha='center', fontsize=6, color='red')
-
-    ax2 = ax1.twinx()
-    ax2.set_ylabel("R1", color='green')
-    ax2.plot(range(1, len(r1_history) + 1), r1_history, label="R1", linewidth=2, marker='o')
-    ax2.tick_params(axis='y', labelcolor='green')
-    
-    for i, v in enumerate(r1):
-        ax2.annotate(v, (i + 1, v), textcoords="offset points", xytext=(0, 5), ha='center', fontsize=6, color='green')
-
-
-    fig.suptitle("Stage2 Evaluation")
-    fig.tight_layout()
-    plt.savefig(os.path.join(cfg.OUTPUT_DIR, "eval.png"))
     
 def save_model(cfg, model, epoch):
     if cfg.MODEL.DIST_TRAIN and dist.get_rank() != 0:
