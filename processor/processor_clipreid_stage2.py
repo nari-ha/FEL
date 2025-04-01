@@ -106,7 +106,7 @@ def do_train_stage2(cfg,
                 target_view = None
             with amp.autocast(enabled=True):
                 score, feat, image_features = model(x = img, label = target, cam_label=target_cam, view_label=target_view)
-                logits = image_features @ text_features.t() # 강화된 image feature랑 text feature로 계산 ㅋ
+                logits = image_features @ text_features.t() # calculated with enhanced image feature and text feature
                 loss = loss_fn(score, feat, target, target_cam, logits)
 
             scaler.scale(loss).backward()

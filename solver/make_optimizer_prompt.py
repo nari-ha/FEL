@@ -44,6 +44,11 @@ def make_optimizer_2stage(cfg, model, center_criterion):
         
         params += [{"params": [value], "lr": lr, "weight_decay": weight_decay}]
         keys += [key]
+    for k, v in model.named_parameters():
+        if v.requires_grad:
+            print(f"Trainable: {k}")
+        else:
+            print(f"Frozen: {k}")
     if cfg.SOLVER.STAGE2.OPTIMIZER_NAME == 'SGD':
         optimizer = getattr(torch.optim, cfg.SOLVER.STAGE2.OPTIMIZER_NAME)(params, momentum=cfg.SOLVER.STAGE2.MOMENTUM)
     elif cfg.SOLVER.STAGE2.OPTIMIZER_NAME == 'AdamW':
