@@ -39,7 +39,7 @@ def make_optimizer_2stage(cfg, model, center_criterion):
             value.requires_grad_(False)
             continue   
         if "feature_enhancer_layer" in key:
-            value.requires_grad_(True)
+            value.requires_grad_(False)
             continue
         # fel freeze
         if "prompt_learner" in key:
