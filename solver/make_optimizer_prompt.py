@@ -45,8 +45,6 @@ def make_optimizer_2stage(cfg, model, center_criterion):
         if "prompt_learner" in key:
             value.requires_grad_(False)
             continue
-        if not value.requires_grad:
-            continue
         
         lr = cfg.SOLVER.STAGE2.BASE_LR
         weight_decay = cfg.SOLVER.STAGE2.WEIGHT_DECAY
