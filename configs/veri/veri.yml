@@ -65,10 +65,10 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: ('person')
+  NAMES: ('veri')
   EVAL: ('veri')
   ROOT_DIR: ('./../dataset')
 OUTPUT_DIR: './output/veri'
-DATA_COMBINE: True
+DATA_COMBINE: False
 
 # python train.py --config_file configs/veri/cnn.yml
