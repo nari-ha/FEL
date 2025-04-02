@@ -69,6 +69,6 @@ DATASETS:
   EVAL: ('veri')
   ROOT_DIR: ('./../dataset')
 OUTPUT_DIR: './output/veri'
-DATA_COMBINE: False
+DATA_COMBINE: True
 
 # python train.py --config_file configs/veri/cnn.yml

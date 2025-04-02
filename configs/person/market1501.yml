@@ -70,6 +70,6 @@ DATASETS:
   ROOT_DIR: './../dataset'
 OUTPUT_DIR: './output/market1501'
 
-DATA_COMBINE: False
+DATA_COMBINE: True
 
 # CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml
