@@ -57,7 +57,7 @@ def make_dataloader(cfg):
     ])
     
     val_transforms_veri = T.Compose([
-        T.Resize((256, 128)),  # ← 이걸로 고정
+        T.Resize((256, 256)),  # ← 이걸로 고정
         T.ToTensor(),
         T.Normalize(mean=cfg.INPUT.PIXEL_MEAN, std=cfg.INPUT.PIXEL_STD)
     ])
@@ -129,8 +129,7 @@ def make_dataloader(cfg):
         print("데이터셋: ", cfg.DATASETS.NAMES)
         dataset_train = __factory[dataset_name](root=cfg.DATASETS.ROOT_DIR)
         train_set = ImageDataset(dataset_train.train, train_transforms)
-        train_set_normal = ImageDataset(dataset_train.train, train_transforms) #잠시 이렇게 넣어놓은거임
-        # train_set_normal = ImageDataset(dataset_train.train, val_transforms) #잠시 이렇게 넣어놓은거임
+        train_set_normal = ImageDataset(dataset_train.train, val_transforms) #잠시 이렇게 넣어놓은거임
         num_classes = dataset_train.num_train_pids
         cam_num = dataset_train.num_train_cams
         view_num = dataset_train.num_train_vids
