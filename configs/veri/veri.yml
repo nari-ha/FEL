@@ -65,7 +65,7 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: ('multi')
+  NAMES: ('veri')
   EVAL: ('veri')
   ROOT_DIR: ('./../dataset')
 OUTPUT_DIR: './output/veri'
