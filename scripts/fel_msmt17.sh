@@ -7,7 +7,6 @@
 #$ -j y
 #$ -l rocky
 
-echo $SGE_HGR_gpu
 set -e
 
 # Replace the following line with a program or command
