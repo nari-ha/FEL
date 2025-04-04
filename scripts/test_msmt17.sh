@@ -13,7 +13,7 @@ set -e
 cd /data/home/ec23709/project/FEL-ReID
 source fel-reid/bin/activate
 python test_clipreid.py --config_file configs/test/market1501.yml TEST.WEIGHT '/data/home/ec23709/project/FEL-ReID/output/msmt17/RN50_120.pth'
-python test_clipreid.py --config_file configs/teset/person.yml TEST.WEIGHT '/data/home/ec23709/project/FEL-ReID/output/msmt17/RN50_120.pth'
+python test_clipreid.py --config_file configs/test/person.yml TEST.WEIGHT '/data/home/ec23709/project/FEL-ReID/output/msmt17/RN50_120.pth'
 python test_clipreid.py --config_file configs/test/veri.yml TEST.WEIGHT '/data/home/ec23709/project/FEL-ReID/output/msmt17/RN50_120.pth'
 python test_clipreid.py --config_file configs/test/multi.yml TEST.WEIGHT '/data/home/ec23709/project/FEL-ReID/output/msmt17/RN50_120.pth'
 
