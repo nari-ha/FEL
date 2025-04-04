@@ -65,8 +65,8 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: 'dev_market'
-  EVAL: 'dev_market'
+  NAMES: 'veri'
+  EVAL: 'veri'
   ROOT_DIR: './../dataset'
 OUTPUT_DIR: './output/dev'
 
