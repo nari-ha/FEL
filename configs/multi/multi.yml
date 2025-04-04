@@ -77,7 +77,7 @@ DATASETS:
 #   ROOT_DIR: ('')
 # OUTPUT_DIR: ''
 
-  NAMES: ('veri')
+  NAMES: ('multi')
   EVAL: ('multi')
   ROOT_DIR: ('./../dataset')
 OUTPUT_DIR: './output/multi'
