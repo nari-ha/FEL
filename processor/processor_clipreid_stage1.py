@@ -72,6 +72,9 @@ def do_train_stage1(cfg,
                 b_list = iter_list[i*batch:(i+1)* batch]
             else:
                 b_list = iter_list[i*batch:num_image]
+                
+            if b_list.size(0) == 0:
+                continue
             
             target = labels_list[b_list]
             image_features = image_features_list[b_list]
