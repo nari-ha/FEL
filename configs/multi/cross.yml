@@ -70,4 +70,4 @@ DATASETS:
   ROOT_DIR: ('./../../dataset')
 OUTPUT_DIR: './output/fel/cross'
 
-# CUDA_VISIBLE_DEVICES=0 python train.py --config_file configs/clipreid/cross.yml
+# CUDA_VISIBLE_DEVICES=0 python train.py --config_file configs/multi/cross.yml

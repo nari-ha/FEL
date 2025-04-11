@@ -65,11 +65,9 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: 'msmt17'
+  NAMES: 'cross'
   EVAL: 'market1501'
-  ROOT_DIR: './../dataset'
+  ROOT_DIR: './../../dataset'
 OUTPUT_DIR: './output/test/market1501'
-
-DATA_COMBINE: True
 
 # CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml
