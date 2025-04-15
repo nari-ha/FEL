@@ -5,8 +5,8 @@ from solver.make_optimizer_prompt import make_optimizer_1stage, make_optimizer_2
 from solver.scheduler_factory import create_scheduler
 from solver.lr_scheduler import WarmupMultiStepLR
 from loss.make_loss import make_loss
-from processor.processor_clipreid_stage1 import do_train_stage1
-from processor.processor_clipreid_stage2 import do_train_stage2
+from processor.processor_fel_stage1 import do_train_stage1
+from processor.processor_fel_stage2 import do_train_stage2
 import random
 import torch
 import numpy as np
