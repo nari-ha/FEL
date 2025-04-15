@@ -1,5 +1,5 @@
 from utils.logger import setup_logger
-from datasets.make_dataloader_clipreid import make_dataloader
+from datasets.make_dataloader_fel import make_dataloader
 from model.make_model_clipreid import make_model
 from solver.make_optimizer_prompt import make_optimizer_1stage, make_optimizer_2stage
 from solver.scheduler_factory import create_scheduler
