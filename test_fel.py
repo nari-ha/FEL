@@ -2,7 +2,7 @@ import os
 from config import cfg
 import argparse
 from datasets.make_dataloader_fel import make_dataloader
-from model.make_model_clipreid import make_model
+from model.make_model_fel import make_model
 from processor.processor_fel_stage2 import do_inference
 from utils.logger import setup_logger
 
