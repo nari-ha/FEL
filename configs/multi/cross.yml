@@ -68,6 +68,6 @@ DATASETS:
   NAMES: ('cross')
   EVAL: 'cross'
   ROOT_DIR: ('./../../dataset')
-OUTPUT_DIR: './output/fel/cross'
+OUTPUT_DIR: './output/tti/cross'
 
 # CUDA_VISIBLE_DEVICES=0 python train.py --config_file configs/multi/cross.yml

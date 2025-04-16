@@ -68,7 +68,7 @@ DATASETS:
   NAMES: 'msmt17'
   EVAL: 'msmt17'
   ROOT_DIR: './../../dataset'
-OUTPUT_DIR: './output/fel/msmt17'
+OUTPUT_DIR: './output/tti/msmt17'
 
 
 # CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml
