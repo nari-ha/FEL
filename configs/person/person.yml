@@ -79,7 +79,7 @@ DATASETS:
 
   NAMES: ('person')
   EVAL: 'person'
-  ROOT_DIR: ('./../dataset')
+  ROOT_DIR: ('./../../dataset')
 OUTPUT_DIR: './output/tti/person'
 
 
