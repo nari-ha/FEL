@@ -236,7 +236,7 @@ def load_clip_to_cpu(backbone_name, h_resolution, w_resolution, vision_stride_si
 class PromptLearner(nn.Module):
     def __init__(self, num_class, dataset_name, dtype, token_embedding):
         super().__init__()
-        if dataset_name == "VehicleID" or dataset_name == "veri":
+        if dataset_name == "veri":
             ctx_init = "A photo of a X X X X vehicle."
         else:
             ctx_init = "A photo of a X X X X person."
