@@ -65,7 +65,7 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: 'multi'
+  NAMES: 'cross'
   EVAL: 'msmt17'
   ROOT_DIR: './../../dataset'
 OUTPUT_DIR: './output/test/tti/msmt17'
