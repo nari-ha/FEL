@@ -68,6 +68,6 @@ DATASETS:
   NAMES: ('person')
   EVAL: ('veri')
   ROOT_DIR: ('./../../dataset')
-OUTPUT_DIR: './output/test/veri'
+OUTPUT_DIR: './output/test/tti/veri'
 
 # python train.py --config_file configs/veri/cnn.yml
