@@ -65,12 +65,11 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: 'veri'
-  EVAL: 'veri'
-  ROOT_DIR: './../dataset'
+  NAMES: 'market1501'
+  EVAL: 'market1501'
+  ROOT_DIR: './../../dataset'
 OUTPUT_DIR: './output/dev'
 
-DATA_COMBINE: False
 DEV_MODE: True
 
 # python train_clipreid.py --config_file configs/dev/dev.yml
