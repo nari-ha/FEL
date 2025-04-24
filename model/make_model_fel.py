@@ -112,6 +112,7 @@ class build_transformer(nn.Module):
         # camera num 중요도 확인한다음에 걍없애도되는지 
 
         self.dataset_name = cfg.DATASETS.NAMES
+        self.eval_name = cfg.DATASETS.EVAL
         self.prompt_learner = PromptLearner(num_classes, self.dataset_name, self.clip_model.dtype, self.clip_model.token_embedding)
         self.text_encoder = TextEncoder(self.clip_model)
 
@@ -165,7 +166,7 @@ class build_transformer(nn.Module):
             text_features = text_features.squeeze(1)
             
         if get_feat == True:
-            if self.dataset_name == "veri":
+            if self.eval_name == "veri":
                 text = "A photo of a car."
             else:
                 text = "A photo of a person."
