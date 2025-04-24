@@ -195,7 +195,9 @@ class build_transformer(nn.Module):
                 # print("Test with feature after BN")
                 return torch.cat([feat, feat_proj], dim=1)
             else:
-                return torch.cat([img_feature, img_feature_proj], dim=1)
+                feat = torch.cat([img_feature, img_feature_proj], dim=1)
+                print("output: ", feat.size())
+                return feat
 
 
     def load_param(self, trained_path):
