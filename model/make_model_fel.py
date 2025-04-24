@@ -154,8 +154,6 @@ class build_transformer(nn.Module):
             text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
             
             text_features = text_features.unsqueeze(1)  # [B, 1, D]
-            print("img_feature: ", img_feature.size())
-            print("img_feature_proj: ", img_feature_proj.size())
             img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
             img_feature_proj, text_features = self.feature_enhancer_layer(
