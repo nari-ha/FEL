@@ -211,7 +211,7 @@ def do_inference(cfg, model, val_loader, num_query):
                 target_view = target_view.to(device)
             else: 
                 target_view = None
-            img_feat = model(img, cam_label=camids, view_label=target_view, get_feat=True)
+            img_feat, txt_feat = model(img, cam_label=camids, view_label=target_view, get_feat=True)
             evaluator.update((img_feat, pid, camid))
             img_path_list.extend(imgpath)
 
