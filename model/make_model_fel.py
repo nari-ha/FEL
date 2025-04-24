@@ -83,10 +83,10 @@ class build_transformer(nn.Module):
         self.h_resolution = int((cfg.INPUT.SIZE_TRAIN[0]-16)//cfg.MODEL.STRIDE_SIZE[0] + 1)
         self.w_resolution = int((cfg.INPUT.SIZE_TRAIN[1]-16)//cfg.MODEL.STRIDE_SIZE[1] + 1)
         self.vision_stride_size = cfg.MODEL.STRIDE_SIZE[0]
-        clip_model = load_clip_to_cpu(self.model_name, self.h_resolution, self.w_resolution, self.vision_stride_size)
-        clip_model.to("cuda")
+        self.clip_model = load_clip_to_cpu(self.model_name, self.h_resolution, self.w_resolution, self.vision_stride_size)
+        self.clip_model.to("cuda")
 
-        self.image_encoder = clip_model.visual
+        self.image_encoder = self.clip_model.visual
         self.feature_enhancer_layer = BiAttentionBlock(
                 v_dim=self.in_planes_proj,
                 l_dim=self.in_planes_proj,
@@ -112,8 +112,8 @@ class build_transformer(nn.Module):
         # camera num 중요도 확인한다음에 걍없애도되는지 
 
         dataset_name = cfg.DATASETS.NAMES
-        self.prompt_learner = PromptLearner(num_classes, dataset_name, clip_model.dtype, clip_model.token_embedding)
-        self.text_encoder = TextEncoder(clip_model)
+        self.prompt_learner = PromptLearner(num_classes, dataset_name, self.clip_model.dtype, self.clip_model.token_embedding)
+        self.text_encoder = TextEncoder(self.clip_model)
 
     def forward(self, x = None, label=None, get_image = False, get_text = False, get_feat = False, cam_label= None, view_label=None):
         if get_text == True:
@@ -168,7 +168,7 @@ class build_transformer(nn.Module):
             tokens = _tokenizer.encode("A photo of a person.")
             padded_tokens = tokens + [0] * (77 - len(tokens))
             text = torch.tensor([padded_tokens]).cuda()
-            text_features = self.text_encoder(text)
+            text_features = self.clip_model.encode_text(text)
             text_features = text_features.unsqueeze(1)  # [B, 1, D]
             img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
