@@ -200,11 +200,19 @@ def do_inference(cfg, model, val_loader, num_query):
     model.eval()
     img_path_list = []
 
-    for n_iter, (img, pid, _, _, _, imgpath) in enumerate(val_loader):
+    for n_iter, (img, pid, camid, camids, target_view, imgpath) in enumerate(val_loader):
         with torch.no_grad():
             img = img.to(device)
-            img_feat, txt_feat = model(img, get_feat = True)
-            evaluator.update((img_feat, pid))
+            if cfg.MODEL.SIE_CAMERA:
+                camids = camids.to(device)
+            else: 
+                camids = None
+            if cfg.MODEL.SIE_VIEW:
+                target_view = target_view.to(device)
+            else: 
+                target_view = None
+            feat = model(img, cam_label=camids, view_label=target_view)
+            evaluator.update((feat, pid, camid))
             img_path_list.extend(imgpath)
 
 
