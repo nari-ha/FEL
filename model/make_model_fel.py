@@ -165,7 +165,7 @@ class build_transformer(nn.Module):
             text_features = text_features.squeeze(1)
             
         if get_feat == True:
-            text = _tokenizer(["A photo of a person."]).cuda()
+            text = _tokenizer.bpe(["A photo of a person."]).cuda()
             text_features = self.text_encoder(text)
             text_features = text_features.unsqueeze(1)  # [B, 1, D]
             img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
