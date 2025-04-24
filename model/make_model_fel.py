@@ -113,7 +113,7 @@ class build_transformer(nn.Module):
 
         dataset_name = cfg.DATASETS.NAMES
         self.prompt_learner = PromptLearner(num_classes, dataset_name, clip_model.dtype, clip_model.token_embedding)
-        self.text_encoder = TextEncoder(self.clip_model)
+        self.text_encoder = TextEncoder(clip_model)
 
     def forward(self, x = None, label=None, get_image = False, get_text = False, get_feat = False, cam_label= None, view_label=None):
         if get_text == True:
