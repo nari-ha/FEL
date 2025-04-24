@@ -165,7 +165,7 @@ class build_transformer(nn.Module):
             text_features = text_features.squeeze(1)
             
         if get_feat == True:
-            tokens = _tokenizer.encode("A photo of a person.").cuda()
+            tokens = _tokenizer.encode("A photo of a person.")
             text = torch.tensor([tokens + [0]*77 - len(tokens)]).cuda()
             text_features = self.text_encoder(text)
             text_features = text_features.unsqueeze(1)  # [B, 1, D]
