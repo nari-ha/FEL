@@ -86,7 +86,7 @@ class build_transformer(nn.Module):
         clip_model = load_clip_to_cpu(self.model_name, self.h_resolution, self.w_resolution, self.vision_stride_size)
         clip_model.to("cuda")
 
-        self.image_encoder = self.clip_model.visual
+        self.image_encoder = clip_model.visual
         self.feature_enhancer_layer = BiAttentionBlock(
                 v_dim=self.in_planes_proj,
                 l_dim=self.in_planes_proj,
