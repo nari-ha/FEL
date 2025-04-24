@@ -203,8 +203,8 @@ def do_inference(cfg, model, val_loader, num_query):
     for n_iter, (img, pid, imgpath) in enumerate(val_loader):
         with torch.no_grad():
             img = img.to(device)
-            feat = model(img, get_feat = True)
-            evaluator.update((feat, pid))
+            img_feat, txt_feat = model(img, get_feat = True)
+            evaluator.update((img_feat, pid))
             img_path_list.extend(imgpath)
 
 
