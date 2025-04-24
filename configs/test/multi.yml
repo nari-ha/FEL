@@ -68,7 +68,7 @@ DATASETS:
   NAMES: ('msmt17')
   EVAL: ('multi')
   ROOT_DIR: ('./../../dataset')
-OUTPUT_DIR: './output/test/tti/multi'
+OUTPUT_DIR: './output/test/fel/multi'
 
 
 # CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml
