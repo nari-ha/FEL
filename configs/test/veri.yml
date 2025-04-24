@@ -65,9 +65,9 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: ('veri')
+  NAMES: ('msmt17')
   EVAL: ('veri')
   ROOT_DIR: ('./../../dataset')
-OUTPUT_DIR: './output/test/tti/veri'
+OUTPUT_DIR: './output/test/fel/veri'
 
 # python train.py --config_file configs/veri/cnn.yml
