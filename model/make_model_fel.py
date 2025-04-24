@@ -111,8 +111,8 @@ class build_transformer(nn.Module):
             
         # camera num 중요도 확인한다음에 걍없애도되는지 
 
-        dataset_name = cfg.DATASETS.NAMES
-        self.prompt_learner = PromptLearner(num_classes, dataset_name, self.clip_model.dtype, self.clip_model.token_embedding)
+        self.dataset_name = cfg.DATASETS.NAMES
+        self.prompt_learner = PromptLearner(num_classes, self.dataset_name, self.clip_model.dtype, self.clip_model.token_embedding)
         self.text_encoder = TextEncoder(self.clip_model)
 
     def forward(self, x = None, label=None, get_image = False, get_text = False, get_feat = False, cam_label= None, view_label=None):
@@ -165,7 +165,11 @@ class build_transformer(nn.Module):
             text_features = text_features.squeeze(1)
             
         if get_feat == True:
-            tokens = _tokenizer.encode("A photo of a person.")
+            if self.dataset_name == "veri":
+                text = "A photo of a car."
+            else:
+                text = "A photo of a person."
+            tokens = _tokenizer.encode(text)
             padded_tokens = tokens + [0] * (77 - len(tokens))
             text = torch.tensor([padded_tokens]).cuda()
             text_features = self.clip_model.encode_text(text)

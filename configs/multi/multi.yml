@@ -78,9 +78,9 @@ DATASETS:
 # OUTPUT_DIR: ''
 
   NAMES: ('multi')
-  EVAL: ('multi')
+  EVAL: ('market1501')
   ROOT_DIR: ('./../../dataset')
-OUTPUT_DIR: './output/tti/multi'
+OUTPUT_DIR: './output/fel/multi'
 
 
 # CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml
