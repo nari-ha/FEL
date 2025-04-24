@@ -150,24 +150,40 @@ class build_transformer(nn.Module):
             img_feature_proj = image_features_proj[:,0]
         
         if get_feat == False and self.feature_enhancer_layer and label is not None:
-
-            prompts = self.prompt_learner(label)
-            text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
-            
-            text_features = text_features.unsqueeze(1)  # [B, 1, D]
+            if self.dataset_name == "veri":
+                txt = "A photo of a vehicle."
+            else:
+                txt = "A photo of a person."
+            tokens = _tokenizer.encode(txt)
+            padded_tokens = tokens + [0] * (77 - len(tokens))
+            text = torch.tensor([padded_tokens]).cuda()
+            text_features = self.clip_model.encode_text(text)
+            text_features = text_features.repeat(img_feature_proj.size()[0], 1)
+            text_features = text_features.unsqueeze(1)
             img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
             img_feature_proj, text_features = self.feature_enhancer_layer(
                 v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None
             )
-    
-            # Return to original dimension
             img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
-            text_features = text_features.squeeze(1)
+
+            # prompts = self.prompt_learner(label)
+            # text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
+            
+            # text_features = text_features.unsqueeze(1)  # [B, 1, D]
+            # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
+            
+            # img_feature_proj, text_features = self.feature_enhancer_layer(
+            #     v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None
+            # )
+    
+            # # Return to original dimension
+            # img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
+            # text_features = text_features.squeeze(1)
             
         if get_feat == True:
             if self.eval_name == "veri":
-                text = "A photo of a car."
+                text = "A photo of a vehicle."
             else:
                 text = "A photo of a person."
             tokens = _tokenizer.encode(text)
@@ -200,7 +216,7 @@ class build_transformer(nn.Module):
             else:
                 img_feat = torch.cat([img_feature, img_feature_proj], dim=1)
                 txt_feat = text_features
-                print("output: ", img_feat.size())
+                
                 if get_feat == True:
                     return img_feat, txt_feat
                 else:
