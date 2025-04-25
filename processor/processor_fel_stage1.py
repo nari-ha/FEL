@@ -114,10 +114,10 @@ def do_train_stage1(cfg,
     logger.info("Stage1 running time: {}".format(total_time))
     
     # loss 그래프 출력
-    plt.figure(figsize=(8,6))
-    plt.plot(range(1, epochs+1), loss_history, label="Loss", color='blue', linewidth=2)
-    plt.xlabel("Epoch")
-    plt.ylabel("Loss")
-    plt.title("Stage1 Loss")
-    plt.legend()
-    plt.savefig(os.path.join(cfg.OUTPUT_DIR, "stage1.png"))
+    # plt.figure(figsize=(8,6))
+    # plt.plot(range(1, epochs+1), loss_history, label="Loss", color='blue', linewidth=2)
+    # plt.xlabel("Epoch")
+    # plt.ylabel("Loss")
+    # plt.title("Stage1 Loss")
+    # plt.legend()
+    # plt.savefig(os.path.join(cfg.OUTPUT_DIR, "stage1.png"))
