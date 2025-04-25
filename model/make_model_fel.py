@@ -118,7 +118,7 @@ class build_transformer(nn.Module):
 
     def forward(self, x = None, label=None, get_image = False, get_text = False, get_feat = False, cam_label= None, view_label=None):
         if get_text == True:
-            prompts = self.prompt_learner(label) 
+            prompts = self.prompt_learner(label)
             text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
             return text_features
 
