@@ -65,7 +65,7 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: 'multi'
+  NAMES: 'market1501'
   EVAL: 'market1501'
   ROOT_DIR: './../../dataset'
 OUTPUT_DIR: './output/test/fel/market1501'
