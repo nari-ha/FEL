@@ -11,7 +11,7 @@
 module load GCCcore/12.2.0 Python/3.10.8
 cd /home/e/ec23709/project/FEL
 source ./../reid/bin/activate
-python test_fel.py --config_file configs/test/market1501.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/tti/person/RN50_100.pth'
-python test_fel.py --config_file configs/test/msmt17.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/tti/person/RN50_100.pth'
-python test_fel.py --config_file configs/test/person.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/tti/person/RN50_100.pth'
+python test_fel.py --config_file configs/test/tti/market1501.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/tti/person/RN50_100.pth'
+python test_fel.py --config_file configs/test/tti/msmt17.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/tti/person/RN50_100.pth'
+python test_fel.py --config_file configs/test/tti/person.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/tti/person/RN50_100.pth'
 
