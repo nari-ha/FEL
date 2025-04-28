@@ -65,7 +65,7 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: ('market1501')
+  NAMES: ('veri')
   EVAL: 'person'
   ROOT_DIR: ('./../../dataset')
 OUTPUT_DIR: './output/test/fel/person'
