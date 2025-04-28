@@ -68,6 +68,6 @@ DATASETS:
   NAMES: ('veri')
   EVAL: ('veri')
   ROOT_DIR: ('./../../dataset')
-OUTPUT_DIR: './output/fel/veri'
+OUTPUT_DIR: './output/tti/veri'
 
 # python train.py --config_file configs/veri/veri.yml

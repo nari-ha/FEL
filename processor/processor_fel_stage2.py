@@ -73,11 +73,11 @@ def do_train_stage2(cfg,
             else:
                 l_list = torch.arange(i*batch, num_classes)
             with amp.autocast(enabled=True):
-                # text_feature = model(label = l_list, get_text = True)
+                text_feature = model(label = l_list, get_text = True)
                 
-                text_feature = model.feature_enhancer_layer(  # 텍스트 피처에도 fel 적용
-                    v=text_feature.unsqueeze(1), l=text_feature.unsqueeze(1)
-                )[1].squeeze(1)
+                # text_feature = model.feature_enhancer_layer(  # 텍스트 피처에도 fel 적용
+                #     v=text_feature.unsqueeze(1), l=text_feature.unsqueeze(1)
+                # )[1].squeeze(1)
                 
             text_features.append(text_feature.cpu())
         text_features = torch.cat(text_features, 0).cuda()
