@@ -11,5 +11,4 @@
 module load GCCcore/12.2.0 Python/3.10.8
 cd /home/e/ec23709/project/FEL
 source ./../reid/bin/activate
-python test_fel.py --config_file configs/test/tti/veri.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/tti/person/RN50_100.pth'
-
+python test_fel.py --config_file configs/test/tti/veri.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/tti/veri/RN50_100.pth'
