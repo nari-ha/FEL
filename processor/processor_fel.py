@@ -70,8 +70,8 @@ def do_train(cfg,
                 target_view = None
             with amp.autocast(enabled=True):
                 score, feat, image_features, text_features = model(img, target, cam_label=target_cam, view_label=target_view)
-                i2tscore = image_features @ text_features.t()
-                loss = loss_fn(score, feat, target, target_cam, i2tscore)
+                logits = image_features @ text_features.t()
+                loss = loss_fn(score, feat, target, target_cam, logits)
 
             scaler.scale(loss).backward()
 
