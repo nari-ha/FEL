@@ -88,7 +88,7 @@ class build_transformer(nn.Module):
             trunc_normal_(self.cv_embed, std=.02)
             print('camera number is : {}'.format(view_num))
 
-    def forward(self, x, label=None, cam_label= None, view_label=None, get_feat=True):
+    def forward(self, x, label=None, cam_label= None, view_label=None):
         if self.model_name == 'RN50':
             image_features_last, image_features, image_features_proj = self.image_encoder(x) #B,512  B,128,512
             img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
