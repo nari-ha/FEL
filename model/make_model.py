@@ -74,6 +74,9 @@ class build_transformer(nn.Module):
                 dropout=0.1,
                 drop_path=0.0,
         )
+        
+        self.dataset_name = cfg.DATASETS.NAMES
+        self.eval_name = cfg.DATASETS.EVAL
 
         if cfg.MODEL.SIE_CAMERA and cfg.MODEL.SIE_VIEW:
             self.cv_embed = nn.Parameter(torch.zeros(camera_num * view_num, self.in_planes))
