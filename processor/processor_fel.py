@@ -71,6 +71,8 @@ def do_train(cfg,
             with amp.autocast(enabled=True):
                 score, feat, image_features, text_features = model(img, target, cam_label=target_cam, view_label=target_view)
                 logits = image_features @ text_features.t()
+                print("img_features: ", image_features.size())
+                print("txt_features: ", text_features.size())
                 loss = loss_fn(score, feat, target, target_cam, logits)
 
             scaler.scale(loss).backward()
