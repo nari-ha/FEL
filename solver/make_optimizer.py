@@ -17,6 +17,12 @@ def make_optimizer(cfg, model, center_criterion):
 
         params += [{"params": [value], "lr": lr, "weight_decay": weight_decay}]
 
+    for k, v in model.named_parameters():
+        if v.requires_grad:
+            print(f"Trainable: {k}")
+        else:
+            print(f"Frozen: {k}")
+            
     if cfg.SOLVER.OPTIMIZER_NAME == 'SGD':
         optimizer = getattr(torch.optim, cfg.SOLVER.OPTIMIZER_NAME)(params, momentum=cfg.SOLVER.MOMENTUM)
     elif cfg.SOLVER.OPTIMIZER_NAME == 'AdamW':

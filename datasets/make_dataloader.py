@@ -7,6 +7,8 @@ from timm.data.random_erasing import RandomErasing
 from .sampler import RandomIdentitySampler
 from .market1501 import Market1501
 from .msmt17 import MSMT17
+from .dev_market import DevMarket
+from .dev_msmt import DevMSMT
 from .sampler_ddp import RandomIdentitySampler_DDP
 import torch.distributed as dist
 from .veri import VeRi
@@ -31,6 +33,8 @@ def val_collate_fn(batch):
     return torch.stack(imgs, dim=0), pids, camids, camids_batch, viewids, img_paths
 
 def make_dataloader(cfg):
+    dataset_name = cfg.DATASETS.NAMES
+    eval_name = cfg.DATASETS.EVAL
     train_transforms = T.Compose([
             T.Resize(cfg.INPUT.SIZE_TRAIN, interpolation=3),
             T.RandomHorizontalFlip(p=cfg.INPUT.PROB),
@@ -50,50 +54,84 @@ def make_dataloader(cfg):
 
     num_workers = cfg.DATALOADER.NUM_WORKERS
 
-    dataset = __factory[cfg.DATASETS.NAMES](root=cfg.DATASETS.ROOT_DIR)
-    
-    train_set = ImageDataset(dataset.train, train_transforms)
-    train_set_normal = ImageDataset(dataset.train, val_transforms)
-    num_classes = dataset.num_train_pids
-    cam_num = dataset.num_train_cams
-    view_num = dataset.num_train_vids
-
-    if 'triplet' in cfg.DATALOADER.SAMPLER:
-        if cfg.MODEL.DIST_TRAIN:
-            print('DIST_TRAIN START')
-            mini_batch_size = cfg.SOLVER.IMS_PER_BATCH // dist.get_world_size()
-            data_sampler = RandomIdentitySampler_DDP(dataset.train, cfg.SOLVER.IMS_PER_BATCH, cfg.DATALOADER.NUM_INSTANCE)
-            batch_sampler = torch.utils.data.sampler.BatchSampler(data_sampler, mini_batch_size, True)
-            train_loader = torch.utils.data.DataLoader(
-                train_set,
-                num_workers=num_workers,
-                batch_sampler=batch_sampler,
-                collate_fn=train_collate_fn,
-                pin_memory=True,
-            )
-        else:
-            train_loader = DataLoader(
-                train_set, batch_size=cfg.SOLVER.IMS_PER_BATCH,
-                sampler=RandomIdentitySampler(dataset.train, cfg.SOLVER.IMS_PER_BATCH, cfg.DATALOADER.NUM_INSTANCE),
-                num_workers=num_workers, collate_fn=train_collate_fn
-            )
-    elif cfg.DATALOADER.SAMPLER == 'softmax':
-        print('using softmax sampler')
-        train_loader = DataLoader(
-            train_set, batch_size=cfg.SOLVER.IMS_PER_BATCH, shuffle=True, num_workers=num_workers,
-            collate_fn=train_collate_fn
-        )
+    if cfg.DEV_MODE == True:
+        dataset1 = DevMarket(root=cfg.DATASETS.ROOT_DIR)
+        dataset2 = DevMSMT(root=cfg.DATASETS.ROOT_DIR)
     else:
-        print('unsupported sampler! expected softmax or triplet but got {}'.format(cfg.SAMPLER))
-
-    val_set = ImageDataset(dataset.query + dataset.gallery, val_transforms)
-
+        dataset1 = Market1501(root=cfg.DATASETS.ROOT_DIR)
+        dataset2 = MSMT17(root=cfg.DATASETS.ROOT_DIR)
+    
+    dataset3 = VeRi(root=cfg.DATASETS.ROOT_DIR)
+    
+    if dataset_name == "person":
+        num_classes = dataset1.num_train_pids + dataset2.num_train_pids
+        cam_num = dataset1.num_train_cams + dataset2.num_train_cams
+        view_num = max(dataset1.num_train_vids, dataset2.num_train_vids)
+        train_data = dataset1.train + dataset2.train
+    elif dataset_name == "veri":
+        num_classes = dataset3.num_train_pids
+        cam_num = dataset3.num_train_cams
+        view_num = dataset3.num_train_vids
+        train_data = dataset3.train
+    elif dataset_name == "multi":
+        num_classes = dataset1.num_train_pids + dataset2.num_train_pids + dataset3.num_train_pids
+        cam_num = dataset1.num_train_cams + dataset2.num_train_cams + dataset3.num_train_cams
+        view_num = max(dataset1.num_train_vids, dataset2.num_train_vids, dataset3.num_train_vids)
+        train_data = dataset1.train + dataset2.train + dataset3.train
+    elif dataset_name == "market1501":
+        num_classes = dataset1.num_train_pids
+        cam_num = dataset1.num_train_cams
+        view_num = dataset1.num_train_vids
+        train_data = dataset1.train
+    elif dataset_name == "msmt17":
+        num_classes = dataset2.num_train_pids
+        cam_num = dataset2.num_train_cams
+        view_num = dataset2.num_train_vids
+        train_data = dataset2.train
+    elif dataset_name == "cross":
+        # if cfg.DEV_MODE == True:
+        num_classes = dataset2.num_train_pids + dataset3.num_train_pids
+        cam_num = dataset2.num_train_cams + dataset3.num_train_cams
+        view_num = max(dataset2.num_train_vids, dataset3.num_train_vids)
+        train_data = dataset2.train + dataset3.train
+    
+    train_set = ImageDataset(train_data, train_transforms)
+    train_set_normal = ImageDataset(train_data, val_transforms)
+    
+    if eval_name == "market1501":
+        query_data = dataset1.query
+        gallery_data = dataset1.gallery
+    elif eval_name == "msmt17":
+        query_data = dataset2.query
+        gallery_data = dataset2.gallery
+    elif eval_name == "veri":
+        query_data = dataset3.query
+        gallery_data = dataset3.gallery
+    elif eval_name == "person":
+        query_data = dataset1.query + dataset2.query
+        gallery_data = dataset1.gallery + dataset2.gallery
+    elif eval_name == "cross":
+        query_data = dataset2.query + dataset3.query
+        gallery_data = dataset2.gallery + dataset3.gallery
+    elif eval_name == "multi":
+        query_data = dataset1.query + dataset2.query + dataset3.query
+        gallery_data = dataset1.gallery + dataset2.gallery + dataset3.gallery
+        
+    val_set = ImageDataset(query_data + gallery_data, val_transforms)
+        
+    train_loader = DataLoader(
+        train_set, batch_size=cfg.SOLVER.IMS_PER_BATCH,
+        sampler=RandomIdentitySampler(train_data, cfg.SOLVER.IMS_PER_BATCH, cfg.DATALOADER.NUM_INSTANCE),
+        num_workers=num_workers, collate_fn=train_collate_fn
+    )
+        
     val_loader = DataLoader(
         val_set, batch_size=cfg.TEST.IMS_PER_BATCH, shuffle=False, num_workers=num_workers,
         collate_fn=val_collate_fn
     )
+    
     train_loader_normal = DataLoader(
         train_set_normal, batch_size=cfg.TEST.IMS_PER_BATCH, shuffle=False, num_workers=num_workers,
         collate_fn=val_collate_fn
     )
-    return train_loader, train_loader_normal, val_loader, len(dataset.query), num_classes, cam_num, view_num
+    return train_loader, train_loader_normal, val_loader, len(query_data), num_classes, cam_num, view_num

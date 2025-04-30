@@ -4,7 +4,7 @@ from model.make_model import make_model
 from solver.make_optimizer import make_optimizer
 from solver.lr_scheduler import WarmupMultiStepLR
 from loss.make_loss import make_loss
-from processor.processor import do_train
+from processor.processor_fel import do_train
 import random
 import torch
 import numpy as np
