@@ -71,4 +71,4 @@ DATASETS:
 OUTPUT_DIR: './output/tti/msmt17'
 
 
-# CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml
+# python train.py --config_file configs/fel/msmt17.yml

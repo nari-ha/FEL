@@ -55,3 +55,5 @@ DATASETS:
 OUTPUT_DIR: './output/felft/market1501'
 
 DEV_MODE: True
+
+# python train.py --config_file configs/fel/dev.yml
