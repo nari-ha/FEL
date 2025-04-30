@@ -53,3 +53,5 @@ DATASETS:
   EVAL: 'market1501'
   ROOT_DIR: './../../dataset'
 OUTPUT_DIR: './output/felft/market1501'
+
+DEV_MODE: True
