@@ -72,5 +72,5 @@ OUTPUT_DIR: './output/dev'
 
 DEV_MODE: True
 
-# python train_clipreid.py --config_file configs/dev/dev.yml
+# python train_fel.py --config_file configs/dev/dev.yml
 # dev_market & dev_msmt
