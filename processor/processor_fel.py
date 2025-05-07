@@ -17,7 +17,7 @@ def do_train(cfg,
              optimizer_center,
              scheduler,
              loss_fn,
-             num_query, local_rank):
+             num_query, num_classes, local_rank):
     log_period = cfg.SOLVER.LOG_PERIOD
     checkpoint_period = cfg.SOLVER.CHECKPOINT_PERIOD
     eval_period = cfg.SOLVER.EVAL_PERIOD
@@ -70,6 +70,8 @@ def do_train(cfg,
                 target_view = None
             with amp.autocast(enabled=True):
                 score, feat, image_features, text_features = model(img, target, cam_label=target_cam, view_label=target_view)
+                text_features = text_features[0].unsqueeze(0)
+                text_features = text_features.expand(num_classes, -1)
                 logits = image_features @ text_features.t()
                 loss = loss_fn(score, feat, target, target_cam, logits)
 

@@ -83,6 +83,6 @@ if __name__ == '__main__':
         optimizer_center,
         scheduler,
         loss_func,
-        num_query, args.local_rank
+        num_query, num_classes, args.local_rank
     )
 # ssh 에 깃 클론

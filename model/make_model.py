@@ -29,6 +29,7 @@ def weights_init_classifier(m):
         nn.init.normal_(m.weight, std=0.001)
         if m.bias:
             nn.init.constant_(m.bias, 0.0)
+            
 
 class build_transformer(nn.Module):
     def __init__(self, num_classes, camera_num, view_num, cfg):
@@ -78,6 +79,7 @@ class build_transformer(nn.Module):
         
         self.dataset_name = cfg.DATASETS.NAMES
         self.eval_name = cfg.DATASETS.EVAL
+    
 
         # if cfg.MODEL.SIE_CAMERA and cfg.MODEL.SIE_VIEW:
         #     self.cv_embed = nn.Parameter(torch.zeros(camera_num * view_num, self.in_planes))
@@ -114,14 +116,9 @@ class build_transformer(nn.Module):
         img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
         text_features = text_features.squeeze(1)
         # bp()
-        
-        
-        text_features = text_features[0].unsqueeze(0)
-        text_features = text_features.expand(self.num_classes, -1)
-        
 
         feat = self.bottleneck(img_feature) 
-        feat_proj = self.bottleneck_proj(img_feature_proj) 
+        feat_proj = self.bottleneck_proj(img_feature_proj)
 
         if self.training:
             cls_score = self.classifier(feat)
