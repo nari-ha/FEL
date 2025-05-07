@@ -113,6 +113,8 @@ class build_transformer(nn.Module):
         img_feature_proj, text_features = self.feature_enhancer_layer(v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None)
         img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
         text_features = text_features.squeeze(1)
+        text_features = text_features[0].unsqueeze(0)
+        text_features = text_features.expand(self.num_classes, -1)
 
         feat = self.bottleneck(img_feature) 
         feat_proj = self.bottleneck_proj(img_feature_proj) 
