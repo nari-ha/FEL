@@ -78,18 +78,18 @@ class build_transformer(nn.Module):
         self.dataset_name = cfg.DATASETS.NAMES
         self.eval_name = cfg.DATASETS.EVAL
 
-        if cfg.MODEL.SIE_CAMERA and cfg.MODEL.SIE_VIEW:
-            self.cv_embed = nn.Parameter(torch.zeros(camera_num * view_num, self.in_planes))
-            trunc_normal_(self.cv_embed, std=.02)
-            print('camera number is : {}'.format(camera_num))
-        elif cfg.MODEL.SIE_CAMERA:
-            self.cv_embed = nn.Parameter(torch.zeros(camera_num, self.in_planes))
-            trunc_normal_(self.cv_embed, std=.02)
-            print('camera number is : {}'.format(camera_num))
-        elif cfg.MODEL.SIE_VIEW:
-            self.cv_embed = nn.Parameter(torch.zeros(view_num, self.in_planes))
-            trunc_normal_(self.cv_embed, std=.02)
-            print('camera number is : {}'.format(view_num))
+        # if cfg.MODEL.SIE_CAMERA and cfg.MODEL.SIE_VIEW:
+        #     self.cv_embed = nn.Parameter(torch.zeros(camera_num * view_num, self.in_planes))
+        #     trunc_normal_(self.cv_embed, std=.02)
+        #     print('camera number is : {}'.format(camera_num))
+        # elif cfg.MODEL.SIE_CAMERA:
+        #     self.cv_embed = nn.Parameter(torch.zeros(camera_num, self.in_planes))
+        #     trunc_normal_(self.cv_embed, std=.02)
+        #     print('camera number is : {}'.format(camera_num))
+        # elif cfg.MODEL.SIE_VIEW:
+        #     self.cv_embed = nn.Parameter(torch.zeros(view_num, self.in_planes))
+        #     trunc_normal_(self.cv_embed, std=.02)
+        #     print('camera number is : {}'.format(view_num))
 
     def forward(self, x, label=None, cam_label= None, view_label=None):
         if self.model_name == 'RN50':
@@ -97,20 +97,6 @@ class build_transformer(nn.Module):
             img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
             img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1) 
             img_feature_proj = image_features_proj[0]
-
-        elif self.model_name == 'ViT-B-16':
-            if cam_label != None and view_label!=None:
-                cv_embed = self.sie_coe * self.cv_embed[cam_label * self.view_num + view_label]
-            elif cam_label != None:
-                cv_embed = self.sie_coe * self.cv_embed[cam_label]
-            elif view_label!=None:
-                cv_embed = self.sie_coe * self.cv_embed[view_label]
-            else:
-                cv_embed = None
-            image_features_last, image_features, image_features_proj = self.image_encoder(x, cv_embed) #B,512  B,128,512
-            img_feature_last = image_features_last[:,0]
-            img_feature = image_features[:,0]
-            img_feature_proj = image_features_proj[:,0]
             
         if self.eval_name == "veri":
             text = "A photo of a vehicle."
