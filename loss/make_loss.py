@@ -52,8 +52,6 @@ def make_loss(cfg, num_classes):    # modified by gu
                     loss = cfg.MODEL.ID_LOSS_WEIGHT * ID_LOSS + cfg.MODEL.TRIPLET_LOSS_WEIGHT * TRI_LOSS
 
                     if i2tscore != None:
-                        print("i2tscore: ", i2tscore.size())
-                        print("target: ", target.size())
                         I2TLOSS = xent(i2tscore, target)
                         loss = cfg.MODEL.I2T_LOSS_WEIGHT * I2TLOSS + loss
                         
