@@ -109,12 +109,13 @@ class build_transformer(nn.Module):
         text_features = self.clip_model.encode_text(text)
         text_features = text_features.repeat(img_feature_proj.size()[0], 1)
         img_feature_proj = img_feature_proj.unsqueeze(1) # [B, D]
+        text_features = text_features.unsqueeze(1)
         img_feature_proj, text_features = self.feature_enhancer_layer(v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None)
         img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
         text_features = text_features.squeeze(1)
         bp()
         
-        
+        assert torch.all(x == x[0]), "모든 행이 동일하지 않습니다."
         text_features = text_features[0].unsqueeze(0)
         text_features = text_features.expand(self.num_classes, -1)
         
