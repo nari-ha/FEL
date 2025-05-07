@@ -119,7 +119,6 @@ class build_transformer(nn.Module):
         text_features = text_features[0].unsqueeze(0)
         text_features = text_features.expand(self.num_classes, -1)
         
-        bp()
 
         feat = self.bottleneck(img_feature) 
         feat_proj = self.bottleneck_proj(img_feature_proj) 
