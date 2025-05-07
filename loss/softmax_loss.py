@@ -17,6 +17,7 @@ class CrossEntropyLabelSmooth(nn.Module):
     def __init__(self, num_classes, epsilon=0.1, use_gpu=True):
         super(CrossEntropyLabelSmooth, self).__init__()
         self.num_classes = num_classes
+        print("num_classes: ", num_classes)
         self.epsilon = epsilon
         self.use_gpu = use_gpu
         self.logsoftmax = nn.LogSoftmax(dim=1)
