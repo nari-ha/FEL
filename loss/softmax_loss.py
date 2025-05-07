@@ -17,7 +17,6 @@ class CrossEntropyLabelSmooth(nn.Module):
     def __init__(self, num_classes, epsilon=0.1, use_gpu=True):
         super(CrossEntropyLabelSmooth, self).__init__()
         self.num_classes = num_classes
-        print("num_classes: ", num_classes)
         self.epsilon = epsilon
         self.use_gpu = use_gpu
         self.logsoftmax = nn.LogSoftmax(dim=1)
@@ -30,7 +29,8 @@ class CrossEntropyLabelSmooth(nn.Module):
         """
         print("inputs: ", inputs.size())
         print("targets: ", targets.size())
-        log_probs = self.logsoftmax(inputs) 
+        log_probs = self.logsoftmax(inputs)
+        print("log_probs: ", log_probs.size())
         targets = torch.zeros(log_probs.size()).scatter_(1, targets.unsqueeze(1).data.cpu(), 1) 
         if self.use_gpu: targets = targets.cuda()
         targets = (1 - self.epsilon) * targets + self.epsilon / self.num_classes

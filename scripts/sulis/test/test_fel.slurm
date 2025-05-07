@@ -14,5 +14,3 @@ source ./../reid/bin/activate
 python test_fel.py --config_file configs/test/fel/market1501.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/fel/veri/RN50_100.pth'
 python test_fel.py --config_file configs/test/fel/msmt17.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/fel/veri/RN50_100.pth'
 python test_fel.py --config_file configs/test/fel/person.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/fel/veri/RN50_100.pth'
-python test_fel.py --config_file configs/test/fel/veri.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/fel/veri/RN50_100.pth'
-python test_fel.py --config_file configs/test/fel/multi.yml TEST.WEIGHT '/home/e/ec23709/project/FEL/output/fel/veri/RN50_100.pth'
