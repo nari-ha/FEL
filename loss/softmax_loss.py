@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
+from pdb import set_trace as bp
 
 class CrossEntropyLabelSmooth(nn.Module):
     """Cross entropy loss with label smoothing regularizer.
@@ -31,6 +32,7 @@ class CrossEntropyLabelSmooth(nn.Module):
         print("targets: ", targets.size())
         log_probs = self.logsoftmax(inputs)
         print("log_probs: ", log_probs.size())
+        bp()
         targets = torch.zeros(log_probs.size()).scatter_(1, targets.unsqueeze(1).data.cpu(), 1) 
         if self.use_gpu: targets = targets.cuda()
         targets = (1 - self.epsilon) * targets + self.epsilon / self.num_classes
