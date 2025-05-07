@@ -6,6 +6,7 @@ from model.fel import BiAttentionBlock
 from .clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 _tokenizer = _Tokenizer()
 from timm.models.layers import DropPath, to_2tuple, trunc_normal_
+from pdb import set_trace as bp
 
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
@@ -106,6 +107,7 @@ class build_transformer(nn.Module):
         padded_tokens = tokens + [0] * (77 - len(tokens))
         text = torch.tensor([padded_tokens]).cuda()
         text_features = self.clip_model.encode_text(text)
+        bp()
         text_features = text_features.repeat(img_feature_proj.size()[0], 1)
         text_features = text_features.unsqueeze(1)
         img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
