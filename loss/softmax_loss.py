@@ -33,10 +33,11 @@ class CrossEntropyLabelSmooth(nn.Module):
         log_probs = self.logsoftmax(inputs)
         print("log_probs: ", log_probs.size())
         bp()
-        targets = torch.zeros(log_probs.size()).scatter_(1, targets.unsqueeze(1).data.cpu(), 1) 
-        if self.use_gpu: targets = targets.cuda()
-        targets = (1 - self.epsilon) * targets + self.epsilon / self.num_classes
-        loss = (- targets * log_probs).mean(0).sum()
+        # targets = torch.zeros(log_probs.size()).scatter_(1, targets.unsqueeze(1).data.cpu(), 1) 
+        targets2 = torch.zeros(log_probs.size()).scatter_(1, targets.unsqueeze(1).data.cpu(), 1) 
+        if self.use_gpu: targets2 = targets2.cuda()
+        targets3 = (1 - self.epsilon) * targets2 + self.epsilon / self.num_classes
+        loss = (- targets3 * log_probs).mean(0).sum()
         return loss
 
 class LabelSmoothingCrossEntropy(nn.Module):
