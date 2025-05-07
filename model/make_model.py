@@ -108,13 +108,9 @@ class build_transformer(nn.Module):
         text = torch.tensor([padded_tokens]).cuda()
         text_features = self.clip_model.encode_text(text)
         text_features = text_features.repeat(img_feature_proj.size()[0], 1)
-        text_features = text_features.squeeze(1) # [B, D]
-        # text_features = text_features.unsqueeze(1) # [B, 1, D]
-        # img_feature_proj = img_feature_proj.unsqueeze(1) # [B, D]
+        img_feature_proj = img_feature_proj.unsqueeze(1) # [B, D]
         bp()
-        img_feature_proj, text_features = self.feature_enhancer_layer(
-            v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None
-        )
+        img_feature_proj, text_features = self.feature_enhancer_layer(v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None)
         img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
         text_features = text_features.squeeze(1)
 
