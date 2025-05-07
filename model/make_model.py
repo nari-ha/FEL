@@ -115,7 +115,7 @@ class build_transformer(nn.Module):
         text_features = text_features.squeeze(1)
         bp()
         
-        assert torch.all(x == x[0]), "모든 행이 동일하지 않습니다."
+        assert torch.all(text_features == text_features[0]), "모든 행이 동일하지 않습니다."
         text_features = text_features[0].unsqueeze(0)
         text_features = text_features.expand(self.num_classes, -1)
         
