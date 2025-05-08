@@ -25,6 +25,8 @@ _C.MODEL.NAME = 'resnet50'
 _C.MODEL.LAST_STRIDE = 1
 # Path to pretrained model of backbone
 _C.MODEL.PRETRAIN_PATH = ''
+# 0이면 전부 learnable, 1이면 image encoder만, 2면 fel만, 3이면 둘 다
+_C.MODEL.FROZEN = 0
 
 # Use ImageNet pretrained model to initialize backbone or use self trained model to initialize the whole model
 # Options: 'imagenet' , 'self' , 'finetune'
