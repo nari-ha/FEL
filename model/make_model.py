@@ -64,10 +64,11 @@ class build_transformer(nn.Module):
         self.h_resolution = int((cfg.INPUT.SIZE_TRAIN[0]-16)//cfg.MODEL.STRIDE_SIZE[0] + 1)
         self.w_resolution = int((cfg.INPUT.SIZE_TRAIN[1]-16)//cfg.MODEL.STRIDE_SIZE[1] + 1)
         self.vision_stride_size = cfg.MODEL.STRIDE_SIZE[0]
-        self.clip_model = load_clip_to_cpu(self.model_name, self.h_resolution, self.w_resolution, self.vision_stride_size)
-        self.clip_model.to("cuda")
+        clip_model = load_clip_to_cpu(self.model_name, self.h_resolution, self.w_resolution, self.vision_stride_size)
+        clip_model.to("cuda")
 
-        self.image_encoder = self.clip_model.visual
+        self.image_encoder = clip_model.visual
+        self.text_encoder = clip_model.encode_text
         self.feature_enhancer_layer = BiAttentionBlock(
                 v_dim=self.in_planes_proj,
                 l_dim=self.in_planes_proj,
@@ -108,7 +109,7 @@ class build_transformer(nn.Module):
         tokens = _tokenizer.encode(text)
         padded_tokens = tokens + [0] * (77 - len(tokens))
         text = torch.tensor([padded_tokens]).cuda()
-        text_features_clip = self.clip_model.encode_text(text)
+        text_features_clip = self.text_encoder(text)
         # print("min: ", text_features_clip.min())
         # print("max: ", text_features_clip.max())
         text_features = text_features_clip.repeat(img_feature_proj.size()[0], 1)
