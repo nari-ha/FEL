@@ -3,7 +3,7 @@ import torch
 def make_optimizer(cfg, model, center_criterion):
     params = []
     for key, value in model.named_parameters():
-        if "clip_model" in key:
+        if "text_encoder" in key:
             value.requires_grad_(False)
             continue
         if not value.requires_grad:
