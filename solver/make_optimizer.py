@@ -3,9 +3,14 @@ import torch
 def make_optimizer(cfg, model, center_criterion):
     params = []
     for key, value in model.named_parameters():
-        if "text_encoder" in key:
-            value.requires_grad_(False)
-            continue
+        if cfg.MODEL.FROZEN == 1:
+            if "image_encoder" in key:
+                value.requires_grad_(False)
+                continue
+        if cfg.MODEL.FROZEN == 2:
+            if "feature_enhancer_layer" in key:
+                value.requires_grad_(False)
+                continue
         if not value.requires_grad:
             continue
         lr = cfg.SOLVER.BASE_LR
