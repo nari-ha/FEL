@@ -6,7 +6,7 @@ def make_optimizer(cfg, model, center_criterion):
         if "text_encoder" in key:
             value.requires_grad_(False)
             continue   
-        if "image_encoder" in key:
+        if "visual" in key:
             value.requires_grad_(False)
             continue
         if not value.requires_grad:
