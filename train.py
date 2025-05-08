@@ -9,19 +9,47 @@ import random
 import torch
 import numpy as np
 import os
+import sys
 import argparse
 from config import cfg_base as cfg
 
-def set_seed(seed):
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    np.random.seed(seed)
-    random.seed(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = True
+# def set_seed(seed):
+#     torch.manual_seed(seed)
+#     torch.cuda.manual_seed(seed)
+#     torch.cuda.manual_seed_all(seed)
+#     np.random.seed(seed)
+#     random.seed(seed)
+#     torch.backends.cudnn.deterministic = True
+#     torch.backends.cudnn.benchmark = True
+
+def set_seed(seed_val) -> None:
+    """ """
+    np.random.seed(seed_val)
+    random.seed(seed_val)
+
+    # cv2.setRNGSeed(seed_val)
+
+    torch.manual_seed(seed_val)
+
+    if device == "cuda":
+        torch.cuda.manual_seed(seed_val)
+        torch.cuda.manual_seed_all(seed_val)
+
+        # When running on the CuDNN backend, two further options must be set
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
+    # Set a fixed value for the hash seed
+    os.environ["PYTHONHASHSEED"] = str(seed_val)
+    print(f"Random seed set as {seed_val}")
+    
 
 if __name__ == '__main__':
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print("Initialising:")
+    print("Python {}.{}".format(sys.version_info[0], sys.version_info[1]))
+    # print("PyTorch {}".format(torch.__version__))
+    print("Using {}".format(device))
 
     parser = argparse.ArgumentParser(description="ReID Baseline Training")
     parser.add_argument(
