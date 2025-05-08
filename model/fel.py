@@ -284,6 +284,8 @@ class BiAttentionBlock(nn.Module):
         # v, l = v + delta_v, l + delta_l
         v = v + self.drop_path(self.gamma_v * delta_v)
         l = l + self.drop_path(self.gamma_l * delta_l)
+        v = self.layer_norm_v(v)
+        l = self.layer_norm_l(l)
         return v, l
 
     # def forward(self, v:List[torch.Tensor], l, attention_mask_v=None, attention_mask_l=None)
