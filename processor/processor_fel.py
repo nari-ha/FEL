@@ -7,6 +7,7 @@ from utils.meter import AverageMeter
 from utils.metrics import R1_mAP_eval
 from torch.cuda import amp
 import torch.distributed as dist
+from pdb import set_trace as bp
 
 def do_train(cfg,
              model,
@@ -90,6 +91,7 @@ def do_train(cfg,
             else:
                 acc = (score.max(1)[1] == target).float().mean()
 
+            bp()
             loss_meter.update(loss.item(), img.shape[0])
             acc_meter.update(acc, 1)
 
