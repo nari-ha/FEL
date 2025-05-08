@@ -109,6 +109,8 @@ class build_transformer(nn.Module):
         padded_tokens = tokens + [0] * (77 - len(tokens))
         text = torch.tensor([padded_tokens]).cuda()
         text_features_clip = self.clip_model.encode_text(text)
+        print("min: ", text_features_clip.min())
+        print("max: ", text_features_clip.max())
         text_features = text_features_clip.repeat(img_feature_proj.size()[0], 1)
         img_feature_proj = img_feature_proj.unsqueeze(1) # [B, D]
         text_features = text_features.unsqueeze(1)
