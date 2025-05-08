@@ -75,6 +75,8 @@ def do_train(cfg,
                 text_features = text_features.expand(num_classes, -1)
                 logits = image_features @ text_features.t()
                 loss = loss_fn(score, feat, target, target_cam, logits)
+                if torch.isnan(loss):
+                    bp()
 
             scaler.scale(loss).backward()
 
@@ -91,7 +93,7 @@ def do_train(cfg,
             else:
                 acc = (score.max(1)[1] == target).float().mean()
 
-            bp()
+            
             loss_meter.update(loss.item(), img.shape[0])
             acc_meter.update(acc, 1)
 
