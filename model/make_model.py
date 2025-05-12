@@ -101,7 +101,7 @@ class build_transformer(nn.Module):
             img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
             img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1) 
             img_feature_proj = image_features_proj[0]
-            
+        bp()
         if self.eval_name == "veri":
             text = "A photo of a vehicle."
         else:
