@@ -3,6 +3,7 @@ import torch.nn as nn
 import numpy as np
 
 from model.fel import BiAttentionBlock
+from model.fel import FeatureResizer
 from .clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 _tokenizer = _Tokenizer()
 from timm.models.layers import DropPath, to_2tuple, trunc_normal_
@@ -77,6 +78,8 @@ class build_transformer(nn.Module):
                 dropout=0.1,
                 drop_path=0.0,
         )
+        self.v_resizer = FeatureResizer(input_feat_size=2048, output_feat_size=1024, dropout=0.1)
+        self.l_resizer = FeatureResizer(input_feat_size=1024, output_feat_size=1024, dropout=0.1)
         
         self.dataset_name = cfg.DATASETS.NAMES
         self.eval_name = cfg.DATASETS.EVAL
@@ -98,13 +101,14 @@ class build_transformer(nn.Module):
     def forward(self, x, label=None, cam_label= None, view_label=None):
         if self.model_name == 'RN50':
             image_features_last, image_features, image_features_proj = self.image_encoder(x) #B,512  B,128,512
-            bp()
+            # bp()
+            # v_feat = image_features.permute(0, 2, 3, 1).reshape(64, -1, 2048)
             img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
             img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1) 
             img_feature_proj = image_features_proj[0]
             
-        
-        bp()
+        # v_feat_resized = self.resizer(v_feat)
+        # bp()
         if self.eval_name == "veri":
             text = "A photo of a vehicle."
         else:
