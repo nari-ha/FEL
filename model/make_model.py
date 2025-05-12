@@ -98,9 +98,12 @@ class build_transformer(nn.Module):
     def forward(self, x, label=None, cam_label= None, view_label=None):
         if self.model_name == 'RN50':
             image_features_last, image_features, image_features_proj = self.image_encoder(x) #B,512  B,128,512
+            bp()
             img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
             img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1) 
             img_feature_proj = image_features_proj[0]
+            
+        
         bp()
         if self.eval_name == "veri":
             text = "A photo of a vehicle."
