@@ -3,8 +3,10 @@ from config import cfg_base as cfg
 import argparse
 from datasets.make_dataloader import make_dataloader
 from model.make_model import make_model
-from processor.processor import do_inference
+from processor.processor_fel import do_inference
 from utils.logger import setup_logger
+import numpy as np
+from config import cfg_base as cfg
 
 
 if __name__ == "__main__":
