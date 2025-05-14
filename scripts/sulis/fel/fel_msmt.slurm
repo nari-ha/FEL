@@ -11,4 +11,4 @@
 module load GCCcore/12.2.0 Python/3.10.8
 cd /home/e/ec23709/project/FEL
 source ./../reid/bin/activate
-python train_fel.py --config_file configs/person/msmt17.yml
+python train.py --config_file configs/fel/msmt17.yml

@@ -6,7 +6,7 @@ MODEL:
   NAME: 'RN50'
   ID_LOSS_WEIGHT : 1.0
   TRIPLET_LOSS_WEIGHT : 1.0
-  FROZEN: 0
+  FROZEN: 2
 
 INPUT:
   SIZE_TRAIN: [256, 128]
@@ -51,9 +51,9 @@ TEST:
 
 DATASETS:
   NAMES: 'msmt17'
-  EVAL: 'market1501'
+  EVAL: 'msmt17'
   ROOT_DIR: './../../dataset'
-OUTPUT_DIR: './output/felft/test/msmt17/market1501'
+OUTPUT_DIR: './output/felft/msmt17/tti/2'
 
 
 # python train.py --config_file configs/fel/msmt17.yml
