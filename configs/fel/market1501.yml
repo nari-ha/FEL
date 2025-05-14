@@ -51,8 +51,8 @@ TEST:
 
 DATASETS:
   NAMES: 'market1501'
-  EVAL: 'market1501'
+  EVAL: 'veri'
   ROOT_DIR: './../../dataset'
-OUTPUT_DIR: './output/felft/market1501/2'
+OUTPUT_DIR: './output/felft/test/market1501'
 
 # python train.py --config_file configs/fel/market1501.yml
