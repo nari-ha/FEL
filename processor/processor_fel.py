@@ -71,6 +71,7 @@ def do_train(cfg,
                 target_view = None
             with amp.autocast(enabled=True):
                 score, feat, image_features, text_features = model(img, target, cam_label=target_cam, view_label=target_view)
+                # bp()
                 text_features = text_features[0].unsqueeze(0)
                 text_features = text_features.expand(num_classes, -1)
                 logits = image_features @ text_features.t()

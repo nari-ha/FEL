@@ -110,7 +110,7 @@ class build_transformer(nn.Module):
         # v_feat_resized = self.resizer(v_feat)
         # bp()
         if self.eval_name == "veri":
-            text = "A photo of a vehicle."
+            text = "A photo of a car."
         else:
             text = "A photo of a person."
         # print(text)
@@ -120,9 +120,9 @@ class build_transformer(nn.Module):
         text_features_clip = self.text_encoder(text)
         # print("min: ", text_features_clip.min())
         # print("max: ", text_features_clip.max())
-        text_features = text_features_clip.repeat(img_feature_proj.size()[0], 1)
+        text_features_repeat = text_features_clip.repeat(img_feature_proj.size()[0], 1)
         img_feature_proj = img_feature_proj.unsqueeze(1) # [B, D]
-        text_features = text_features.unsqueeze(1)
+        text_features = text_features_repeat.unsqueeze(1)
         img_feature_proj, text_features = self.feature_enhancer_layer(v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None)
         img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
         text_features = text_features.squeeze(1)
