@@ -50,9 +50,9 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: 'msmt17'
-  EVAL: 'msmt17'
+  NAMES: 'market1501'
+  EVAL: 'market1501'
   ROOT_DIR: './../../dataset'
-OUTPUT_DIR: './output/felft/msmt17/2'
+OUTPUT_DIR: './output/felft/market1501/2'
 
 # python train.py --config_file configs/fel/market1501.yml
