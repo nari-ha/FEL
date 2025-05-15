@@ -51,9 +51,9 @@ TEST:
 
 DATASETS:
   NAMES: 'msmt17'
-  EVAL: 'market1501'
+  EVAL: 'veri'
   ROOT_DIR: './../../dataset'
-OUTPUT_DIR: './output/felft/msmt17/tti/test/marekt'
+OUTPUT_DIR: './output/felft/msmt17/tti/test/veri'
 
 
 # python train.py --config_file configs/fel/msmt17.yml
