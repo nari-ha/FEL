@@ -51,7 +51,7 @@ TEST:
 
 DATASETS:
   NAMES: 'market1501'
-  EVAL: 'msmt17'
+  EVAL: 'veri'
   ROOT_DIR: './../../dataset'
 OUTPUT_DIR: './output/felft/market1501/tti/test'
 

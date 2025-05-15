@@ -113,6 +113,7 @@ class build_transformer(nn.Module):
             text = "A photo of a car."
         else:
             text = "A photo of a person."
+        print(text)
         # print(text)
         tokens = _tokenizer.encode(text)
         padded_tokens = tokens + [0] * (77 - len(tokens))
