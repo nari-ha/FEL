@@ -65,9 +65,9 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: ('market1501')
+  NAMES: ('veri')
   EVAL: ('veri')
   ROOT_DIR: ('./../../dataset')
-OUTPUT_DIR: './output/test/veri'
+OUTPUT_DIR: './output/test/veri/2'
 
 # python train.py --config_file configs/veri/cnn.yml
