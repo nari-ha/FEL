@@ -60,14 +60,14 @@ TEST:
   EVAL: True
   IMS_PER_BATCH: 64
   RE_RANKING: False
-  WEIGHT: '/data/home/ec23709/project/FEL-ReID/output/market1501/RN50_120.pth'
+  WEIGHT: ''
   NECK_FEAT: 'before'
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: 'veri'
+  NAMES: 'market1501'
   EVAL: 'msmt17'
   ROOT_DIR: './../../dataset'
-OUTPUT_DIR: './output/test/fel/msmt17'
+OUTPUT_DIR: './output/test/msmt17'
 
 # CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml
