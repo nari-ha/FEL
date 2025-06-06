@@ -271,6 +271,7 @@ class CLIP(nn.Module):
                 input_resolution=h_resolution*w_resolution,
                 width=vision_width
             )
+            print("modified resnet")
         else:
             vision_heads = vision_width // 64
             self.visual = VisionTransformer(
@@ -283,6 +284,7 @@ class CLIP(nn.Module):
                 heads=vision_heads,
                 output_dim=embed_dim
             )
+            print("vision transformer")
             
         self.transformer = Transformer(
             width=transformer_width,
