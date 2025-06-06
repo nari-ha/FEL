@@ -5,6 +5,7 @@ from .clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 _tokenizer = _Tokenizer()
 from timm.models.layers import DropPath, to_2tuple, trunc_normal_
 from .fel import BiAttentionBlock
+from pdb import set_trace as bp
 
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
@@ -130,10 +131,12 @@ class build_transformer(nn.Module):
                 return image_features_proj[:,0]
         
         if self.model_name == 'RN50':
-            image_features_last, image_features, image_features_proj = self.image_encoder(x) 
+            image_features_last, image_features, image_features_proj = self.image_encoder(x)
+            bp() 
             img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
             img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1) 
             img_feature_proj = image_features_proj[0]
+            bp()
 
         elif self.model_name == 'ViT-B-16':
             if cam_label != None and view_label!=None:
