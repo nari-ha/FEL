@@ -201,7 +201,6 @@ class build_transformer(nn.Module):
                 text = "A photo of a person."
             tokens = _tokenizer.encode(text)
             padded_tokens = tokens + [0] * (77 - len(tokens))
-            bp()
             text = torch.tensor([padded_tokens]).cuda()
             text_features = self.clip_model.encode_text(text)
             text_features = text_features.repeat(img_feature_proj.size()[0], 1)
