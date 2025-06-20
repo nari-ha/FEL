@@ -112,6 +112,13 @@ class BiMultiHeadAttention(nn.Module):
 
         self.out_v_proj = nn.Linear(self.embed_dim, self.v_dim)
         self.out_l_proj = nn.Linear(self.embed_dim, self.l_dim)
+        
+        # Self-attention module added
+        self.self_attn_v = nn.MultiheadAttention(embed_dim=self.v_dim, num_heads=num_heads, dropout=dropout)
+        self.self_attn_l = nn.MultiheadAttention(embed_dim=self.l_dim, num_heads=num_heads, dropout=dropout)
+        self.norm_self_v = nn.LayerNorm(self.v_dim)
+        self.norm_self_l = nn.LayerNorm(self.l_dim)
+        # Self-attention
 
         self.stable_softmax_2d = True
         self.clamp_min_for_underflow = True
@@ -151,6 +158,24 @@ class BiMultiHeadAttention(nn.Module):
         # if os.environ.get('IPDB_SHILONG_DEBUG', None) == 'INFO':
         #     import ipdb; ipdb.set_trace()
         bsz, tgt_len, _ = v.size()
+        
+        # self-attention 적용
+        src_len = l.size(1)
+        v_t = v.transpose(0, 1)                                      # (n_img, bsz, v_dim)
+        self_v_out, _ = self.self_attn_v(v_t, v_t, v_t, 
+                                         key_padding_mask=attention_mask_v)
+        self_v_out = self_v_out.transpose(0, 1)                      # (bsz, n_img, v_dim)
+        v = self.norm_self_v(v + F.dropout(self_v_out, p=self.dropout, training=self.training))
+
+        l_t = l.transpose(0, 1)                                      # (n_txt, bsz, l_dim)
+        self_l_out, _ = self.self_attn_l(l_t, l_t, l_t,
+                                         key_padding_mask=attention_mask_l)
+        self_l_out = self_l_out.transpose(0, 1)                      # (bsz, n_txt, l_dim)
+        l = self.norm_self_l(l + F.dropout(self_l_out, p=self.dropout, training=self.training))
+        # self-attention 적용
+        
+        
+        
         query_states = self.v_proj(v) * self.scale
         key_states = self._shape(self.l_proj(l), -1, bsz)
         value_v_states = self._shape(self.values_v_proj(v), -1, bsz)

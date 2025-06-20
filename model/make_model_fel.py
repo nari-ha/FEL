@@ -90,7 +90,7 @@ class build_transformer(nn.Module):
         self.image_encoder = self.clip_model.visual
         self.feature_enhancer_layer = BiAttentionBlock(
                 v_dim=self.in_planes_proj,
-                l_dim=self.in_planes_proj,
+                l_dim=self.in_planes_proj/2,
                 embed_dim=self.in_planes_proj // 2,
                 num_heads=8//2,
                 dropout=0.1,
@@ -154,21 +154,23 @@ class build_transformer(nn.Module):
         
         # img_feature_last 를 fel 태우고
         
-        if get_feat == False and self.feature_enhancer_layer and label is not None:
+        # if get_feat == False and self.feature_enhancer_layer and label is not None:
+        if label is not None:
 
-            prompts = self.prompt_learner(label)
-            text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
+            l_feature = self.prompt_learner(label)
+            # text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
             
-            text_features = text_features.unsqueeze(1)  # [B, 1, D]
-            img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
+            # text_features = text_features.unsqueeze(1)  # [B, 1, D]
+            # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
+            v_feature = torch.stack([img_feature, img_feature_proj], dim=1)
             img_feature_proj, text_features = self.feature_enhancer_layer(
-                v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None
+                v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
             )
-    
-            # Return to original dimension
-            img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
-            text_features = text_features.squeeze(1)
+            bp()
+
+            # img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
+            # text_features = text_features.squeeze(1)
             
         # if get_feat == True:
         #     if self.eval_name == "veri":
