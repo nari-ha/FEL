@@ -50,6 +50,19 @@ class TextEncoder(nn.Module):
         # take features from the eot embedding (eot_token is the highest number in each sequence)
         x = x[torch.arange(x.shape[0]), tokenized_prompts.argmax(dim=-1)] @ self.text_projection 
         return x
+    
+class SimpleMLP(nn.Module):
+    def __init__(self, input_dim, hidden_dim, dropout=0.1):
+        super().__init__()
+        self.fc = nn.Linear(input_dim, hidden_dim)
+        self.activation = nn.ReLU(inplace=True)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x):
+        x = self.fc(x)
+        x = self.activation(x)
+        x = self.dropout(x)
+        return x
 
 class build_transformer(nn.Module):
     def __init__(self, num_classes, camera_num, view_num, cfg):
@@ -64,6 +77,15 @@ class build_transformer(nn.Module):
         elif self.model_name == 'RN50':
             self.in_planes = 2048
             self.in_planes_proj = 1024
+            
+        # mlp 추가
+        self.mlp = SimpleMLP(input_dim=self.in_planes,
+                             hidden_dim=self.in_planes_proj,
+                             dropout=0.1)
+        self.mlp2 = SimpleMLP(input_dim=self.in_planes_proj,
+                             hidden_dim=self.in_planes,
+                             dropout=0.1)
+            
         self.num_classes = num_classes
         self.camera_num = camera_num
         self.view_num = view_num
@@ -133,7 +155,8 @@ class build_transformer(nn.Module):
         if self.model_name == 'RN50':
             image_features_last, image_features, image_features_proj = self.image_encoder(x)
             img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
-            img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1) 
+            img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1)
+            img_feat = self.mlp(img_feature)
             img_feature_proj = image_features_proj[0]
             bp()
 
@@ -163,10 +186,11 @@ class build_transformer(nn.Module):
             # text_features = text_features.unsqueeze(1)  # [B, 1, D]
             # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
-            v_feature = torch.stack([img_feature_last, img_feature_proj], dim=1)
+            v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
             img_feature_proj, text_features = self.feature_enhancer_layer(
                 v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
             )
+            bp()
 
             # img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
             # text_features = text_features.squeeze(1)
@@ -190,14 +214,14 @@ class build_transformer(nn.Module):
         #     img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
         #     text_features = text_features.squeeze(1)
             
-            
-        feat = self.bottleneck(img_feature) 
+        img_feature = self.mlp2(img_feat)
+        feat = self.bottleneck(img_feature)
         feat_proj = self.bottleneck_proj(img_feature_proj)
         
         if self.training:
             cls_score = self.classifier(feat)
             cls_score_proj = self.classifier_proj(feat_proj)
-            bp()
+            # bp()
             return [cls_score, cls_score_proj], [img_feature_last, img_feature, img_feature_proj], img_feature_proj
 
         else:
