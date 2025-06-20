@@ -135,7 +135,7 @@ class build_transformer(nn.Module):
             img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
             img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1) 
             img_feature_proj = image_features_proj[0]
-            # bp()
+            bp()
 
         elif self.model_name == 'ViT-B-16':
             if cam_label != None and view_label!=None:
