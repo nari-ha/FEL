@@ -158,7 +158,6 @@ class build_transformer(nn.Module):
             img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1)
             img_feat = self.mlp(img_feature)
             img_feature_proj = image_features_proj[0]
-            bp()
 
         elif self.model_name == 'ViT-B-16':
             if cam_label != None and view_label!=None:
@@ -187,10 +186,10 @@ class build_transformer(nn.Module):
             # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
             v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
-            img_feature_proj, text_features = self.feature_enhancer_layer(
+            img_features, text_features = self.feature_enhancer_layer(
                 v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
             )
-            bp()
+            img_feat, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
 
             # img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
             # text_features = text_features.squeeze(1)
@@ -221,7 +220,6 @@ class build_transformer(nn.Module):
         if self.training:
             cls_score = self.classifier(feat)
             cls_score_proj = self.classifier_proj(feat_proj)
-            # bp()
             return [cls_score, cls_score_proj], [img_feature_last, img_feature, img_feature_proj], img_feature_proj
 
         else:
