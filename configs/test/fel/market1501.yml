@@ -65,9 +65,10 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: 'veri'
+  NAMES: 'market1501'
   EVAL: 'market1501'
-  ROOT_DIR: './../../dataset'
-OUTPUT_DIR: './output/test/2/market1501'
+  ROOT_DIR: './../dataset'
+OUTPUT_DIR: './output/fel_prompt/test/market1501'
+
 
 # CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml

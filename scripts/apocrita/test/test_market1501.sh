@@ -12,6 +12,7 @@ set -e
 # Replace the following line with a program or command
 cd /data/home/ec23709/project/FEL
 source ./../ReID/reid/bin/activate
+python test_clipreid.py --config_file configs/test/market1501.yml TEST.WEIGHT '/data/home/ec23709/project/FEL/output/fel_prompt/market1501/RN50_100.pth'
 python test_clipreid.py --config_file configs/test/veri.yml TEST.WEIGHT '/data/home/ec23709/project/FEL/output/fel_prompt/market1501/RN50_100.pth'
 python test_clipreid.py --config_file configs/test/msmt17.yml TEST.WEIGHT '/data/home/ec23709/project/FEL/output/fel_prompt/market1501/RN50_100.pth'
 
