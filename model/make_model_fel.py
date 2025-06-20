@@ -163,11 +163,10 @@ class build_transformer(nn.Module):
             # text_features = text_features.unsqueeze(1)  # [B, 1, D]
             # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
-            v_feature = torch.stack([img_feature, img_feature_proj], dim=1)
+            v_feature = torch.stack([img_feature_last, img_feature_proj], dim=1)
             img_feature_proj, text_features = self.feature_enhancer_layer(
                 v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
             )
-            bp()
 
             # img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
             # text_features = text_features.squeeze(1)
