@@ -210,12 +210,11 @@ class build_transformer(nn.Module):
 
             # img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
             # text_features = text_features.squeeze(1)
-        else:
-            bp()
-            l_feature = self.prompt_learner(label)
-            v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
-            img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-            img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
+        # else:
+        #     l_feature = self.prompt_learner(label)
+        #     v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
+        #     img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+        #     img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
             
         # if get_feat == True:
         #     if self.eval_name == "veri":
