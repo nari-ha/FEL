@@ -106,7 +106,23 @@ class build_transformer(nn.Module):
         self.clip_model.to("cuda")
 
         self.image_encoder = self.clip_model.visual
-        self.feature_enhancer_layer = BiAttentionBlock(
+        self.feature_enhancer_layer1 = BiAttentionBlock(
+                v_dim=self.in_planes,
+                l_dim=self.in_planes_proj // 2,
+                embed_dim=self.in_planes_proj // 2,
+                num_heads=8//2,
+                dropout=0.1,
+                drop_path=0.0,
+        )
+        self.feature_enhancer_layer2 = BiAttentionBlock(
+                v_dim=self.in_planes,
+                l_dim=self.in_planes_proj // 2,
+                embed_dim=self.in_planes_proj // 2,
+                num_heads=8//2,
+                dropout=0.1,
+                drop_path=0.0,
+        )
+        self.feature_enhancer_layer3 = BiAttentionBlock(
                 v_dim=self.in_planes,
                 l_dim=self.in_planes_proj // 2,
                 embed_dim=self.in_planes_proj // 2,
@@ -183,6 +199,12 @@ class build_transformer(nn.Module):
             # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
             v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
+            img_features, text_features = self.feature_enhancer_layer(
+                v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
+            )
+            img_features, text_features = self.feature_enhancer_layer(
+                v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
+            )
             img_features, text_features = self.feature_enhancer_layer(
                 v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
             )
