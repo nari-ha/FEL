@@ -191,9 +191,7 @@ class build_transformer(nn.Module):
         
         # if get_feat == False and self.feature_enhancer_layer and label is not None:
         if label is not None:
-            bp()
             l_feature = self.prompt_learner(label)
-            bp()
             # text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
             
             # text_features = text_features.unsqueeze(1)  # [B, 1, D]
