@@ -153,8 +153,7 @@ class build_transformer(nn.Module):
             img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
             img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1)
             img_feature_proj = image_features_proj[0]
-            img_feat_last = self.mlp2(img_feature_last)
-            img_feat_proj = self.mlp2(img_feature_proj)
+
 
         elif self.model_name == 'ViT-B-16':
             if cam_label != None and view_label!=None:
@@ -175,7 +174,8 @@ class build_transformer(nn.Module):
         
         # if get_feat == False and self.feature_enhancer_layer and label is not None:
         if label is not None:
-
+            img_feat_last = self.mlp2(img_feature_last)
+            img_feat_proj = self.mlp2(img_feature_proj)
             l_feature = self.prompt_learner(label)
             # text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
             
@@ -208,7 +208,7 @@ class build_transformer(nn.Module):
         #         v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None
         #     )
         #     img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
-        
+
         img_feature_last = self.mlp(img_feature_last)
         img_feature_proj = self.mlp(img_feature_proj)
         feat = self.bottleneck(img_feature)
