@@ -185,14 +185,15 @@ class build_transformer(nn.Module):
             img_feature = image_features[:,0]
             img_feature_proj = image_features_proj[:,0]
             
-        
+        img_feat_last = self.mlp2(img_feature_last)
+        img_feat_proj = self.mlp2(img_feature_proj)
         # img_feature_last 를 fel 태우고
         
         # if get_feat == False and self.feature_enhancer_layer and label is not None:
         if label is not None:
-            img_feat_last = self.mlp2(img_feature_last)
-            img_feat_proj = self.mlp2(img_feature_proj)
+            bp()
             l_feature = self.prompt_learner(label)
+            bp()
             # text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
             
             # text_features = text_features.unsqueeze(1)  # [B, 1, D]
@@ -208,8 +209,15 @@ class build_transformer(nn.Module):
             # )
             img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
 
+
             # img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
             # text_features = text_features.squeeze(1)
+        else:
+            bp()
+            l_feature = self.prompt_learner(label)
+            v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
+            img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+            img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
             
         # if get_feat == True:
         #     if self.eval_name == "veri":
