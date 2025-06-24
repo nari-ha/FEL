@@ -111,7 +111,7 @@ class build_transformer(nn.Module):
 
         self.image_encoder = self.clip_model.visual
         self.feature_enhancer_layer = BiAttentionBlock(
-                v_dim=self.in_planes_proj,
+                v_dim=self.in_planes,
                 l_dim=self.in_planes_proj // 2,
                 embed_dim=self.in_planes_proj // 2,
                 num_heads=8//2,
@@ -156,8 +156,9 @@ class build_transformer(nn.Module):
             image_features_last, image_features, image_features_proj = self.image_encoder(x)
             img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
             img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1)
-            img_feat = self.mlp(img_feature)
             img_feature_proj = image_features_proj[0]
+            img_feat_last = self.mlp2(img_feature_last)
+            img_feat_proj = self.mlp2(img_feature_proj)
 
         elif self.model_name == 'ViT-B-16':
             if cam_label != None and view_label!=None:
@@ -185,11 +186,11 @@ class build_transformer(nn.Module):
             # text_features = text_features.unsqueeze(1)  # [B, 1, D]
             # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
-            v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
+            v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
             img_features, text_features = self.feature_enhancer_layer(
                 v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
             )
-            img_feat, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
+            img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
 
             # img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
             # text_features = text_features.squeeze(1)
@@ -212,7 +213,8 @@ class build_transformer(nn.Module):
         #     )
         #     img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
             
-        img_feature = self.mlp2(img_feat)
+        img_feature_last = self.mlp(img_feature_last)
+        img_feature_proj = self.mlp(img_feature_proj)
         feat = self.bottleneck(img_feature)
         feat_proj = self.bottleneck_proj(img_feature_proj)
         
