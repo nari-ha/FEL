@@ -79,12 +79,8 @@ class build_transformer(nn.Module):
             self.in_planes_proj = 1024
             
         # mlp 추가
-        self.mlp = SimpleMLP(input_dim=self.in_planes,
-                             hidden_dim=self.in_planes_proj,
-                             dropout=0.1)
-        self.mlp2 = SimpleMLP(input_dim=self.in_planes_proj,
-                             hidden_dim=self.in_planes,
-                             dropout=0.1)
+        self.mlp = SimpleMLP(input_dim=self.in_planes, hidden_dim=self.in_planes_proj, dropout=0.1) # 2048 > 1024
+        self.mlp2 = SimpleMLP(input_dim=self.in_planes_proj, hidden_dim=self.in_planes, dropout=0.1) # 1024 > 2048
             
         self.num_classes = num_classes
         self.camera_num = camera_num
@@ -139,7 +135,7 @@ class build_transformer(nn.Module):
         self.prompt_learner = PromptLearner(num_classes, self.dataset_name, self.clip_model.dtype, self.clip_model.token_embedding)
         self.text_encoder = TextEncoder(self.clip_model)
 
-    def forward(self, x = None, label=None, get_image = False, get_text = False, get_feat = False, cam_label= None, view_label=None):
+    def forward(self, x = None, label=None, get_image = False, get_text = False, cam_label= None, view_label=None):
         if get_text == True:
             prompts = self.prompt_learner(label)
             text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
@@ -212,7 +208,7 @@ class build_transformer(nn.Module):
         #         v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None
         #     )
         #     img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
-            
+        
         img_feature_last = self.mlp(img_feature_last)
         img_feature_proj = self.mlp(img_feature_proj)
         feat = self.bottleneck(img_feature)
