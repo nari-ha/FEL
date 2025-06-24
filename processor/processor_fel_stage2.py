@@ -11,6 +11,7 @@ from torch.nn import functional as F
 from loss.supcontrast import SupConLoss
 import matplotlib.pyplot as plt
 import numpy as np
+from pdb import set_trace as bp
 
 def do_train_stage2(cfg,
              model,
@@ -105,6 +106,7 @@ def do_train_stage2(cfg,
             else: 
                 target_view = None
             with amp.autocast(enabled=True):
+                bp()
                 score, feat, image_features = model(x = img, label = target, cam_label=target_cam, view_label=target_view)
                 logits = image_features @ text_features.t()
                 loss = loss_fn(score, feat, target, target_cam, logits)
@@ -168,6 +170,7 @@ def evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger):
     for n_iter, (img, vid, camid, camids, target_view, _) in enumerate(val_loader):
         with torch.no_grad():
             img = img.to(device)
+            bp()
             target = vid.to(device)
             camids = camids.to(device) if cfg.MODEL.SIE_CAMERA else None
             target_view = target_view.to(device) if cfg.MODEL.SIE_VIEW else None
