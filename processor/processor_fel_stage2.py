@@ -170,7 +170,6 @@ def evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger):
         with torch.no_grad():
             img = img.to(device)
             target = (torch.tensor(vid)).to(device)
-            bp()
             camids = camids.to(device) if cfg.MODEL.SIE_CAMERA else None
             target_view = target_view.to(device) if cfg.MODEL.SIE_VIEW else None
             img_feat = model(img, label=target, cam_label=camids, view_label=target_view)

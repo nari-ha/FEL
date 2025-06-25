@@ -235,7 +235,7 @@ class build_transformer(nn.Module):
                 text = "A photo of a person."
             prompts = clip.tokenize(text)
             # l_feature = self.prompt_learner(label)
-            bp()
+            # bp()
             l_feature = self.text_encoder2(prompts)
             v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
             img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
