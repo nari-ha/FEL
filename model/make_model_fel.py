@@ -170,7 +170,7 @@ class build_transformer(nn.Module):
         self.text_encoder = TextEncoder(self.clip_model)
         self.text_encoder2 = TextEncoder2(self.clip_model)
 
-    def forward(self, x = None, label=None, get_image = False, get_text = False, cam_label= None, view_label=None):
+    def forward(self, x = None, label=None, get_image = False, get_text = False, t_feat = None, cam_label= None, view_label=None):
         if get_text == True:
             prompts = self.prompt_learner(label)
             text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
@@ -210,7 +210,8 @@ class build_transformer(nn.Module):
         # img_feature_last 를 fel 태우고
         
         # if get_feat == False and self.feature_enhancer_layer and label is not None:
-        if label is not None:
+        if t_feat is not None:
+            bp()
             prompts = self.prompt_learner(label)
             l_feature = self.text_encoder2(prompts)
             # l_feature = text_features.unsqueeze(1)  # [B, 1, D]
