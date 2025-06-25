@@ -5,6 +5,7 @@ from .clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 _tokenizer = _Tokenizer()
 from timm.models.layers import DropPath, to_2tuple, trunc_normal_
 from .fel import BiAttentionBlock
+
 from pdb import set_trace as bp
 
 def weights_init_kaiming(m):
@@ -49,6 +50,26 @@ class TextEncoder(nn.Module):
         # x.shape = [batch_size, n_ctx, transformer.width]
         # take features from the eot embedding (eot_token is the highest number in each sequence)
         x = x[torch.arange(x.shape[0]), tokenized_prompts.argmax(dim=-1)] @ self.text_projection 
+        return x
+    
+class TextEncoder2(nn.Module):
+    def __init__(self, clip_model):
+        super().__init__()
+        self.transformer = clip_model.transformer
+        self.positional_embedding = clip_model.positional_embedding
+        self.ln_final = clip_model.ln_final
+        self.text_projection = clip_model.text_projection
+        self.dtype = clip_model.dtype
+
+    def forward(self, prompts): 
+        x = prompts + self.positional_embedding.type(self.dtype)
+        x = x.permute(1, 0, 2)  # NLD -> LND
+        # 트랜스포머 블록 통과
+        x = self.transformer(x)
+        # 다시 원래의 배치 우선 순서로 변환
+        x = x.permute(1, 0, 2)  # LND -> NLD
+        # 최종 레이어 정규화 (선택 사항, 트랜스포머 직후를 원하면 이 줄 제거)
+        x = self.ln_final(x).type(self.dtype)
         return x
     
 class SimpleMLP(nn.Module):
@@ -108,24 +129,24 @@ class build_transformer(nn.Module):
         self.image_encoder = self.clip_model.visual
         self.feature_enhancer_layer1 = BiAttentionBlock(
                 v_dim=self.in_planes,
-                l_dim=self.in_planes_proj // 2,
-                embed_dim=self.in_planes_proj // 2,
+                l_dim=self.in_planes_proj,
+                embed_dim=self.in_planes_proj,
                 num_heads=8//2,
                 dropout=0.1,
                 drop_path=0.0,
         )
         self.feature_enhancer_layer2 = BiAttentionBlock(
                 v_dim=self.in_planes,
-                l_dim=self.in_planes_proj // 2,
-                embed_dim=self.in_planes_proj // 2,
+                l_dim=self.in_planes_proj,
+                embed_dim=self.in_planes_proj,
                 num_heads=8//2,
                 dropout=0.1,
                 drop_path=0.0,
         )
         self.feature_enhancer_layer3 = BiAttentionBlock(
                 v_dim=self.in_planes,
-                l_dim=self.in_planes_proj // 2,
-                embed_dim=self.in_planes_proj // 2,
+                l_dim=self.in_planes_proj,
+                embed_dim=self.in_planes_proj,
                 num_heads=8//2,
                 dropout=0.1,
                 drop_path=0.0,
@@ -150,6 +171,7 @@ class build_transformer(nn.Module):
         self.eval_name = cfg.DATASETS.EVAL
         self.prompt_learner = PromptLearner(num_classes, self.dataset_name, self.clip_model.dtype, self.clip_model.token_embedding)
         self.text_encoder = TextEncoder(self.clip_model)
+        self.text_encoder2 = TextEncoder2(self.clip_model)
 
     def forward(self, x = None, label=None, get_image = False, get_text = False, cam_label= None, view_label=None):
         if get_text == True:
@@ -191,10 +213,10 @@ class build_transformer(nn.Module):
         
         # if get_feat == False and self.feature_enhancer_layer and label is not None:
         if label is not None:
-            l_feature = self.prompt_learner(label)
-            # text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
-            
-            # text_features = text_features.unsqueeze(1)  # [B, 1, D]
+            prompts = self.prompt_learner(label)
+            text_features = self.text_encoder2(prompts)
+            bp()
+            # l_feature = text_features.unsqueeze(1)  # [B, 1, D]
             # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
             v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
@@ -210,21 +232,26 @@ class build_transformer(nn.Module):
 
             # img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
             # text_features = text_features.squeeze(1)
-        # else:
-        #     bp()
-        #     l_feature = self.prompt_learner(label)
-        #     v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
-        #     img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-        #     img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
+        else:
+            if self.eval_name == "veri":
+                text = "A photo of a vehicle."
+            else:
+                text = "A photo of a person."
+            prompts = _tokenizer.encode(text)
+            # l_feature = self.prompt_learner(label)
+            text_features = self.text_encoder2(prompts)
+            v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
+            img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+            img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
             
         # if get_feat == True:
-        #     if self.eval_name == "veri":
-        #         text = "A photo of a vehicle."
-        #     else:
-        #         text = "A photo of a person."
-        #     tokens = _tokenizer.encode(text)
-        #     padded_tokens = tokens + [0] * (77 - len(tokens))
-        #     text = torch.tensor([padded_tokens]).cuda()
+            # if self.eval_name == "veri":
+            #     text = "A photo of a vehicle."
+            # else:
+            #     text = "A photo of a person."
+            # tokens = _tokenizer.encode(text)
+            # padded_tokens = tokens + [0] * (77 - len(tokens))
+            # text = torch.tensor([padded_tokens]).cuda()
         #     text_features = self.clip_model.encode_text(text)
         #     text_features = text_features.repeat(img_feature_proj.size()[0], 1)
         #     text_features = text_features.unsqueeze(1)
