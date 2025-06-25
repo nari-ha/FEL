@@ -127,7 +127,6 @@ class BiMultiHeadAttention(nn.Module):
         self._reset_parameters()
 
     def _shape(self, tensor: torch.Tensor, seq_len: int, bsz: int):
-        print("size: ",tensor.size())
         return tensor.view(bsz, seq_len, self.num_heads, self.head_dim).transpose(1, 2).contiguous()
 
     def _reset_parameters(self):
