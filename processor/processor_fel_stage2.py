@@ -169,11 +169,9 @@ def evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger):
     for n_iter, (img, vid, camid, camids, target_view, _) in enumerate(val_loader):
         with torch.no_grad():
             img = img.to(device)
-            vid2 = torch.tensor(vid)
-            target = vid2.to(device)
             camids = camids.to(device) if cfg.MODEL.SIE_CAMERA else None
             target_view = target_view.to(device) if cfg.MODEL.SIE_VIEW else None
-            img_feat = model(img, label=target, cam_label=camids, view_label=target_view)
+            img_feat = model(img, cam_label=camids, view_label=target_view)
             evaluator.update((img_feat, vid, camid))
     
     cmc, mAP, _, _, _, _, _ = evaluator.compute()
