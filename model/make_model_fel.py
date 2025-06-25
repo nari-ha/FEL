@@ -214,8 +214,7 @@ class build_transformer(nn.Module):
         # if get_feat == False and self.feature_enhancer_layer and label is not None:
         if label is not None:
             prompts = self.prompt_learner(label)
-            text_features = self.text_encoder2(prompts)
-            bp()
+            l_feature = self.text_encoder2(prompts)
             # l_feature = text_features.unsqueeze(1)  # [B, 1, D]
             # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
@@ -237,9 +236,10 @@ class build_transformer(nn.Module):
                 text = "A photo of a vehicle."
             else:
                 text = "A photo of a person."
-            prompts = _tokenizer.encode(text)
+            prompts = clip.tokenize(text)
             # l_feature = self.prompt_learner(label)
-            text_features = self.text_encoder2(prompts)
+            bp()
+            l_feature = self.text_encoder2(prompts)
             v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
             img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
             img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
