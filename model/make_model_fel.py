@@ -185,9 +185,9 @@ class build_transformer(nn.Module):
         
         if self.model_name == 'RN50':
             image_features_last, image_features, image_features_proj = self.image_encoder(x)
-            img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
-            img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1)
-            img_feature_proj = image_features_proj[0]
+            img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) # 1024
+            img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1) # 2048
+            img_feature_proj = image_features_proj[0] # 1024
 
 
         elif self.model_name == 'ViT-B-16':
@@ -204,14 +204,13 @@ class build_transformer(nn.Module):
             img_feature = image_features[:,0]
             img_feature_proj = image_features_proj[:,0]
             
-        img_feat = self.mlp(img_feature)
+        img_feat = self.mlp(img_feature) # 2048 > 1024
         # img_feat_last = self.mlp2(img_feature_last)
         # img_feat_proj = self.mlp2(img_feature_proj)
         # img_feature_last 를 fel 태우고
         
         # if get_feat == False and self.feature_enhancer_layer and label is not None:
         if t_feat is not None:
-            bp()
             # prompts = self.prompt_learner(label)
             # l_feature = self.text_encoder2(prompts)
             l_feature = t_feat.unsqueeze(0).expand(64, -1, -1)
@@ -279,6 +278,7 @@ class build_transformer(nn.Module):
                 return torch.cat([feat, feat_proj], dim=1)
             else:
                 img_feat = torch.cat([img_feature, img_feature_proj], dim=1)
+                print("img_feat size: ", img_feat.size())
                 return img_feat
 
     def load_param(self, trained_path):
