@@ -279,7 +279,6 @@ class build_transformer(nn.Module):
                 return torch.cat([feat, feat_proj], dim=1)
             else:
                 img_feat = torch.cat([img_feature, img_feature_proj], dim=1)
-                print("img_feat size: ", img_feat.size())
                 return img_feat
 
     def load_param(self, trained_path):
