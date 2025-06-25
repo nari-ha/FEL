@@ -126,7 +126,7 @@ class build_transformer(nn.Module):
         self.image_encoder = self.clip_model.visual
         self.feature_enhancer_layer1 = BiAttentionBlock(
                 v_dim=self.in_planes_proj,
-                l_dim=self.in_planes_proj//2,
+                l_dim=self.in_planes_proj,
                 embed_dim=self.in_planes_proj//2,
                 num_heads=8//2,
                 dropout=0.1,
@@ -134,7 +134,7 @@ class build_transformer(nn.Module):
         )
         self.feature_enhancer_layer2 = BiAttentionBlock(
                 v_dim=self.in_planes_proj,
-                l_dim=self.in_planes_proj//2,
+                l_dim=self.in_planes_proj,
                 embed_dim=self.in_planes_proj//2,
                 num_heads=8//2,
                 dropout=0.1,
@@ -142,7 +142,7 @@ class build_transformer(nn.Module):
         )
         self.feature_enhancer_layer3 = BiAttentionBlock(
                 v_dim=self.in_planes_proj,
-                l_dim=self.in_planes_proj//2,
+                l_dim=self.in_planes_proj,
                 embed_dim=self.in_planes_proj//2,
                 num_heads=8//2,
                 dropout=0.1,
@@ -212,8 +212,9 @@ class build_transformer(nn.Module):
         # if get_feat == False and self.feature_enhancer_layer and label is not None:
         if t_feat is not None:
             bp()
-            prompts = self.prompt_learner(label)
-            l_feature = self.text_encoder2(prompts)
+            # prompts = self.prompt_learner(label)
+            # l_feature = self.text_encoder2(prompts)
+            l_feature = t_feat.unsqueeze(0).expand(64, -1, -1)
             # l_feature = text_features.unsqueeze(1)  # [B, 1, D]
             # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
