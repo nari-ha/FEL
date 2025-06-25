@@ -204,8 +204,9 @@ class build_transformer(nn.Module):
             img_feature = image_features[:,0]
             img_feature_proj = image_features_proj[:,0]
             
-        img_feat_last = self.mlp2(img_feature_last)
-        img_feat_proj = self.mlp2(img_feature_proj)
+        img_feat = self.mlp(img_feature)
+        # img_feat_last = self.mlp2(img_feature_last)
+        # img_feat_proj = self.mlp2(img_feature_proj)
         # img_feature_last 를 fel 태우고
         
         # if get_feat == False and self.feature_enhancer_layer and label is not None:
@@ -215,7 +216,7 @@ class build_transformer(nn.Module):
             # l_feature = text_features.unsqueeze(1)  # [B, 1, D]
             # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
-            v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
+            v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
             img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
             # img_features, text_features = self.feature_enhancer_layer(
             #     v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
@@ -237,7 +238,7 @@ class build_transformer(nn.Module):
             # l_feature = self.prompt_learner(label)
             # bp()
             l_feature = self.text_encoder2(prompts)
-            v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
+            v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
             img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
             img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
             
@@ -259,8 +260,9 @@ class build_transformer(nn.Module):
         #     )
         #     img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
 
-        img_feature_last = self.mlp(img_feature_last)
-        img_feature_proj = self.mlp(img_feature_proj)
+        # img_feature_last = self.mlp(img_feature_last)
+        # img_feature_proj = self.mlp(img_feature_proj)
+        img_feature = self.mlp2(img_feat)
         feat = self.bottleneck(img_feature)
         feat_proj = self.bottleneck_proj(img_feature_proj)
         
