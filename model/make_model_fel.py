@@ -64,11 +64,8 @@ class TextEncoder2(nn.Module):
     def forward(self, prompts): 
         x = prompts + self.positional_embedding.type(self.dtype)
         x = x.permute(1, 0, 2)  # NLD -> LND
-        # 트랜스포머 블록 통과
         x = self.transformer(x)
-        # 다시 원래의 배치 우선 순서로 변환
         x = x.permute(1, 0, 2)  # LND -> NLD
-        # 최종 레이어 정규화 (선택 사항, 트랜스포머 직후를 원하면 이 줄 제거)
         x = self.ln_final(x).type(self.dtype)
         return x
     
@@ -129,24 +126,24 @@ class build_transformer(nn.Module):
         self.image_encoder = self.clip_model.visual
         self.feature_enhancer_layer1 = BiAttentionBlock(
                 v_dim=self.in_planes,
-                l_dim=self.in_planes_proj,
-                embed_dim=self.in_planes_proj,
+                l_dim=self.in_planes_proj//2,
+                embed_dim=self.in_planes_proj//2,
                 num_heads=8//2,
                 dropout=0.1,
                 drop_path=0.0,
         )
         self.feature_enhancer_layer2 = BiAttentionBlock(
                 v_dim=self.in_planes,
-                l_dim=self.in_planes_proj,
-                embed_dim=self.in_planes_proj,
+                l_dim=self.in_planes_proj//2,
+                embed_dim=self.in_planes_proj//2,
                 num_heads=8//2,
                 dropout=0.1,
                 drop_path=0.0,
         )
         self.feature_enhancer_layer3 = BiAttentionBlock(
                 v_dim=self.in_planes,
-                l_dim=self.in_planes_proj,
-                embed_dim=self.in_planes_proj,
+                l_dim=self.in_planes_proj//2,
+                embed_dim=self.in_planes_proj//2,
                 num_heads=8//2,
                 dropout=0.1,
                 drop_path=0.0,
