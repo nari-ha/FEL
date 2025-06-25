@@ -147,7 +147,7 @@ def do_train_stage2(cfg,
             save_model(cfg, model, epoch)
 
         if epoch % eval_period == 0 and (not cfg.MODEL.DIST_TRAIN or dist.get_rank() == 0):
-            mAP, r1 = evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger)  # 모델 평가
+            mAP, r1 = evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger, text_features)  # 모델 평가
             map_history.append(round(mAP * 100, 1))
             r1_history.append(round(r1 * 100, 1))
 
@@ -163,7 +163,7 @@ def save_model(cfg, model, epoch):
     torch.save(model.state_dict(),
                os.path.join(cfg.OUTPUT_DIR, f"{cfg.MODEL.NAME}_{epoch}.pth"))
 
-def evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger):
+def evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger, text_features):
     # 모델 평가하기
     model.eval()
     for n_iter, (img, vid, camid, camids, target_view, _) in enumerate(val_loader):
@@ -171,7 +171,7 @@ def evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger):
             img = img.to(device)
             camids = camids.to(device) if cfg.MODEL.SIE_CAMERA else None
             target_view = target_view.to(device) if cfg.MODEL.SIE_VIEW else None
-            img_feat = model(img, cam_label=camids, view_label=target_view)
+            img_feat = model(img, cam_label=camids, view_label=target_view, t_feat = text_features)
             evaluator.update((img_feat, vid, camid))
     
     cmc, mAP, _, _, _, _, _ = evaluator.compute()
