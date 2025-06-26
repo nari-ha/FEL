@@ -154,7 +154,9 @@ def do_train_stage2(cfg,
     all_end_time = time.monotonic()
     total_time = timedelta(seconds=all_end_time - all_start_time)
     logger.info("Total running time: {}".format(total_time))
-    
+
+def save_text(cfg, text_features):
+    torch.save(text_features, os.path.join(cfg.OUTPUT_DIR, f"{cfg.MODEL.NAME}_text.pth"))
     
 def save_model(cfg, model, epoch):
     if cfg.MODEL.DIST_TRAIN and dist.get_rank() != 0:
@@ -222,7 +224,7 @@ def do_inference(cfg, model, val_loader, num_query):
     logger.info("mAP: {:.1%}".format(mAP))
     for r in [1, 5, 10]:
         logger.info("CMC curve, Rank-{:<3}:{:.1%}".format(r, cmc[r - 1]))
-    return cmc[0], cmc[4]
+    return mAP, cmc[0], cmc[4]
     
 
 # def do_inference(cfg,
