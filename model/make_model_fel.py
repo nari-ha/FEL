@@ -125,7 +125,7 @@ class build_transformer(nn.Module):
 
         self.image_encoder = self.clip_model.visual
         self.feature_enhancer_layer1 = BiAttentionBlock(
-                v_dim=self.in_planes,
+                v_dim=self.in_planes_proj, # 1024
                 l_dim=self.in_planes_proj,
                 embed_dim=self.in_planes_proj//2,
                 num_heads=8//2,
@@ -204,9 +204,9 @@ class build_transformer(nn.Module):
             img_feature = image_features[:,0]
             img_feature_proj = image_features_proj[:,0]
             
-        # img_feat = self.mlp(img_feature) # 2048 > 1024
-        img_feat_last = self.mlp2(img_feature_last) # 1024 > 2048
-        img_feat_proj = self.mlp2(img_feature_proj) # 1024 > 2048
+        img_feat = self.mlp(img_feature) # 2048 > 1024
+        # img_feat_last = self.mlp2(img_feature_last) # 1024 > 2048
+        # img_feat_proj = self.mlp2(img_feature_proj) # 1024 > 2048
 
         # if get_feat == False and self.feature_enhancer_layer and label is not None:
         if t_feat is not None:
@@ -216,7 +216,7 @@ class build_transformer(nn.Module):
             # l_feature = text_features.unsqueeze(1)  # [B, 1, D]
             # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
             
-            v_feature = torch.stack([img_feature, img_feat_last, img_feat_proj], dim=1)
+            v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
             # print(f"v_type: {v_feature.dtype} l_type: {l_feature.dtype}")
             img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
             # img_features, text_features = self.feature_enhancer_layer(
@@ -245,9 +245,10 @@ class build_transformer(nn.Module):
         #     )
         #     img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
 
-        img_feature_last = self.mlp(img_feature_last) # 2048 > 1024
-        img_feature_proj = self.mlp(img_feature_proj) # 2048 > 1024
-        # img_feature = self.mlp2(img_feat)
+        # img_feature_last = self.mlp(img_feature_last) # 2048 > 1024
+        # img_feature_proj = self.mlp(img_feature_proj) # 2048 > 1024
+        img_feature = self.mlp2(img_feature) # 1024 > 2048
+        
         feat = self.bottleneck(img_feature)
         feat_proj = self.bottleneck_proj(img_feature_proj)
         
