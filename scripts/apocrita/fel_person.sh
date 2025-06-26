@@ -10,7 +10,7 @@
 set -e
 
 # Replace the following line with a program or command
-cd /data/home/ec23709/project/FEL-ReID
+cd /data/home/ec23709/project/FEL
 source fel-reid/bin/activate
 python train_clipreid.py --config_file configs/person/person.yml
 

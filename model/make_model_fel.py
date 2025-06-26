@@ -127,8 +127,8 @@ class build_transformer(nn.Module):
         self.feature_enhancer_layer1 = BiAttentionBlock(
                 v_dim=self.in_planes_proj, # 1024
                 l_dim=self.in_planes_proj,
-                embed_dim=self.in_planes_proj,
-                num_heads=8,
+                embed_dim=self.in_planes_proj//2,
+                num_heads=4,
                 dropout=0.1,
                 drop_path=0.0,
         )
@@ -136,7 +136,7 @@ class build_transformer(nn.Module):
                 v_dim=self.in_planes_proj,
                 l_dim=self.in_planes_proj,
                 embed_dim=self.in_planes_proj,
-                num_heads=8,
+                num_heads=4,
                 dropout=0.1,
                 drop_path=0.0,
         )
@@ -144,7 +144,7 @@ class build_transformer(nn.Module):
                 v_dim=self.in_planes_proj,
                 l_dim=self.in_planes_proj,
                 embed_dim=self.in_planes_proj,
-                num_heads=8,
+                num_heads=4,
                 dropout=0.1,
                 drop_path=0.0,
         )
