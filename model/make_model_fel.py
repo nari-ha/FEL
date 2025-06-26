@@ -127,8 +127,8 @@ class build_transformer(nn.Module):
         self.feature_enhancer_layer1 = BiAttentionBlock(
                 v_dim=self.in_planes_proj, # 1024
                 l_dim=self.in_planes_proj,
-                embed_dim=self.in_planes_proj//2,
-                num_heads=8//2,
+                embed_dim=self.in_planes_proj,
+                num_heads=8,
                 dropout=0.1,
                 drop_path=0.0,
         )
@@ -136,7 +136,7 @@ class build_transformer(nn.Module):
                 v_dim=self.in_planes_proj,
                 l_dim=self.in_planes_proj,
                 embed_dim=self.in_planes_proj,
-                num_heads=8//2,
+                num_heads=8,
                 dropout=0.1,
                 drop_path=0.0,
         )
@@ -144,7 +144,7 @@ class build_transformer(nn.Module):
                 v_dim=self.in_planes_proj,
                 l_dim=self.in_planes_proj,
                 embed_dim=self.in_planes_proj,
-                num_heads=8//2,
+                num_heads=8,
                 dropout=0.1,
                 drop_path=0.0,
         )
@@ -215,8 +215,8 @@ class build_transformer(nn.Module):
         l_feature = t_feat.unsqueeze(0).expand(img_feature.shape[0], -1, -1)
         v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
         # print(f"v_type: {v_feature.dtype} l_type: {l_feature.dtype}")
-        v_feature, l_feature = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-        v_feature, l_feature = self.feature_enhancer_layer2(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+        # v_feature, l_feature = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+        # v_feature, l_feature = self.feature_enhancer_layer2(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
         img_features, text_features = self.feature_enhancer_layer3(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
         
         # img_features, text_features = self.feature_enhancer_layer(
