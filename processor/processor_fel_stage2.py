@@ -145,6 +145,7 @@ def do_train_stage2(cfg,
 
         if epoch % checkpoint_period == 0:
             save_model(cfg, model, epoch)
+            save_text(cfg, text_features)
 
         if epoch % eval_period == 0 and (not cfg.MODEL.DIST_TRAIN or dist.get_rank() == 0):
             mAP, r1 = evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger, text_features)  # 모델 평가
@@ -185,7 +186,7 @@ def evaluate_model(cfg, model, val_loader, evaluator, device, epoch, logger, tex
     torch.cuda.empty_cache()
     return mAP, cmc[0]
 
-def do_inference(cfg, model, val_loader, num_query):
+def do_inference(cfg, model, val_loader, num_query, text_features):
     device = "cuda"
     logger = logging.getLogger("transreid.test")
     logger.info("Enter inferencing")
@@ -201,7 +202,6 @@ def do_inference(cfg, model, val_loader, num_query):
         model.to(device)
 
     model.eval()
-    img_path_list = []
 
     for n_iter, (img, pid, camid, camids, target_view, imgpath) in enumerate(val_loader):
         with torch.no_grad():
@@ -214,10 +214,8 @@ def do_inference(cfg, model, val_loader, num_query):
                 target_view = target_view.to(device)
             else: 
                 target_view = None
-            img_feat = model(img, cam_label=camids, view_label=target_view)
+            img_feat = model(img, cam_label=camids, view_label=target_view, t_feat = text_features.float())
             evaluator.update((img_feat, pid, camid))
-            img_path_list.extend(imgpath)
-
 
     cmc, mAP, _, _, _, _, _ = evaluator.compute()
     logger.info("Validation Results ")
