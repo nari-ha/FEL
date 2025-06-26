@@ -209,26 +209,26 @@ class build_transformer(nn.Module):
         # img_feat_proj = self.mlp2(img_feature_proj) # 1024 > 2048
 
         # if get_feat == False and self.feature_enhancer_layer and label is not None:
-        if t_feat is not None:
+        # if t_feat is not None:
             # prompts = self.prompt_learner(label)
             # l_feature = self.text_encoder2(prompts)
-            l_feature = t_feat.unsqueeze(0).expand(img_feature.shape[0], -1, -1)
-            # l_feature = text_features.unsqueeze(1)  # [B, 1, D]
-            # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
-            
-            v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
-            # print(f"v_type: {v_feature.dtype} l_type: {l_feature.dtype}")
-            img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-            # v_feature, l_feature = self.feature_enhancer_layer2(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-            # img_features, text_features = self.feature_enhancer_layer3(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-            
-            # img_features, text_features = self.feature_enhancer_layer(
-            #     v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
-            # )
-            # img_features, text_features = self.feature_enhancer_layer(
-            #     v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
-            # )
-            img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
+        l_feature = t_feat.unsqueeze(0).expand(img_feature.shape[0], -1, -1)
+        # l_feature = text_features.unsqueeze(1)  # [B, 1, D]
+        # img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
+        
+        v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
+        # print(f"v_type: {v_feature.dtype} l_type: {l_feature.dtype}")
+        img_features, text_features = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+        # v_feature, l_feature = self.feature_enhancer_layer2(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+        # img_features, text_features = self.feature_enhancer_layer3(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+        
+        # img_features, text_features = self.feature_enhancer_layer(
+        #     v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
+        # )
+        # img_features, text_features = self.feature_enhancer_layer(
+        #     v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
+        # )
+        img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
             
         # if get_feat == True:
             # if self.eval_name == "veri":
