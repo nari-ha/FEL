@@ -63,6 +63,7 @@ TEST:
   WEIGHT: ''
   NECK_FEAT: 'before'
   FEAT_NORM: 'yes'
+  TEXT: ''
 
 DATASETS:
   NAMES: 'market1501'
