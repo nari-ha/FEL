@@ -52,23 +52,6 @@ class TextEncoder(nn.Module):
         x = x[torch.arange(x.shape[0]), tokenized_prompts.argmax(dim=-1)] @ self.text_projection 
         return x
     
-class TextEncoder2(nn.Module):
-    def __init__(self, clip_model):
-        super().__init__()
-        self.transformer = clip_model.transformer
-        self.positional_embedding = clip_model.positional_embedding
-        self.ln_final = clip_model.ln_final
-        self.text_projection = clip_model.text_projection
-        self.dtype = clip_model.dtype
-
-    def forward(self, prompts): 
-        x = prompts + self.positional_embedding.type(self.dtype)
-        x = x.permute(1, 0, 2)  # NLD -> LND
-        x = self.transformer(x)
-        x = x.permute(1, 0, 2)  # LND -> NLD
-        x = self.ln_final(x).type(self.dtype)
-        return x
-    
 class SimpleMLP(nn.Module):
     def __init__(self, input_dim, hidden_dim, dropout=0.1):
         super().__init__()
@@ -168,7 +151,6 @@ class build_transformer(nn.Module):
         self.eval_name = cfg.DATASETS.EVAL
         self.prompt_learner = PromptLearner(num_classes, self.dataset_name, self.clip_model.dtype, self.clip_model.token_embedding)
         self.text_encoder = TextEncoder(self.clip_model)
-        self.text_encoder2 = TextEncoder2(self.clip_model)
 
     def forward(self, x = None, label=None, get_image = False, get_text = False, t_feat = None, cam_label= None, view_label=None):
         if get_text == True:
@@ -208,24 +190,13 @@ class build_transformer(nn.Module):
         # img_feat_last = self.mlp2(img_feature_last) # 1024 > 2048
         # img_feat_proj = self.mlp2(img_feature_proj) # 1024 > 2048
 
-        # if get_feat == False and self.feature_enhancer_layer and label is not None:
-        # if t_feat is not None:
-            # prompts = self.prompt_learner(label)
-            # l_feature = self.text_encoder2(prompts)
-        l_feature = t_feat.unsqueeze(0).expand(img_feature.shape[0], -1, -1)
-        v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
-        # print(f"v_type: {v_feature.dtype} l_type: {l_feature.dtype}")
-        # v_feature, l_feature = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-        # v_feature, l_feature = self.feature_enhancer_layer2(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-        img_features, text_features = self.feature_enhancer_layer3(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-        
-        # img_features, text_features = self.feature_enhancer_layer(
-        #     v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
-        # )
-        # img_features, text_features = self.feature_enhancer_layer(
-        #     v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None
-        # )
-        img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
+        if t_feat is not None:
+            l_feature = t_feat.unsqueeze(0).expand(img_feature.shape[0], -1, -1)
+            v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
+            # v_feature, l_feature = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+            # v_feature, l_feature = self.feature_enhancer_layer2(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+            img_features, text_features = self.feature_enhancer_layer3(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+            img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
             
         # if get_feat == True:
             # if self.eval_name == "veri":
