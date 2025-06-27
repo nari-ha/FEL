@@ -31,9 +31,6 @@ def make_optimizer_2stage(cfg, model, center_criterion):
     for key, value in model.named_parameters():
         if "text_encoder" in key:
             value.requires_grad_(False)
-            continue   
-        if "feature_enhancer_layer" in key:
-            value.requires_grad_(False)
             continue
         # fel freeze
         if "prompt_learner" in key:
