@@ -36,6 +36,9 @@ def make_optimizer_2stage(cfg, model, center_criterion):
         if "prompt_learner" in key:
             value.requires_grad_(False)
             continue
+        if "image_encoder" in key:
+            value.requires_grad_(False)
+            continue
         if not value.requires_grad:
             continue
         
