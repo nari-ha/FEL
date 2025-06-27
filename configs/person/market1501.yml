@@ -63,12 +63,12 @@ TEST:
   WEIGHT: ''
   NECK_FEAT: 'before'
   FEAT_NORM: 'yes'
-  TEXT: './output/fel_prompt/dim1/market1501/RN50_text.pth'
+  TEXT: ''
 
 DATASETS:
   NAMES: 'market1501'
   EVAL: 'market1501'
   ROOT_DIR: './../dataset'
-OUTPUT_DIR: './output/fel_prompt/dim2/market1501' # dim 2048 embed 1024 head 4
+OUTPUT_DIR: './output/fel_prompt/fel/market1501' # dim 1024 embed 512 head 4
 
 # CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml
