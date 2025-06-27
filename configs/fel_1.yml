@@ -52,7 +52,7 @@ SOLVER:
     LOG_PERIOD: 50
     EVAL_PERIOD: 20
     BIAS_LR_FACTOR: 2
-    
+    TRAIN: 0 # 0이면 image encoder learnable, 1이면 image encoder freeze
     STEPS: [40, 70]
     GAMMA: 0.1
 

@@ -32,13 +32,14 @@ def make_optimizer_2stage(cfg, model, center_criterion):
         if "text_encoder" in key:
             value.requires_grad_(False)
             continue
-        # fel freeze
         if "prompt_learner" in key:
             value.requires_grad_(False)
             continue
-        # if "image_encoder" in key:
-        #     value.requires_grad_(False)
-        #     continue
+        # image encoder freeze
+        if cfg.SOLVER.STAGE2.TRAIN == 1:
+            if "image_encoder" in key:
+                value.requires_grad_(False)
+                continue
         if not value.requires_grad:
             continue
         

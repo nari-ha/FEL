@@ -203,7 +203,7 @@ _C.SOLVER.STAGE2.WARMUP_METHOD = "linear"
 
 _C.SOLVER.STAGE2.COSINE_MARGIN = 0.5
 _C.SOLVER.STAGE2.COSINE_SCALE = 30
-
+_C.SOLVER.STAGE2.TRAIN = 0
 # epoch number of saving checkpoints
 _C.SOLVER.STAGE2.CHECKPOINT_PERIOD = 10
 # iteration of display training log
