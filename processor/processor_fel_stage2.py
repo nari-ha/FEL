@@ -200,7 +200,8 @@ def do_inference(cfg, model, val_loader, num_query, text_features):
             print('Using {} GPUs for inference'.format(torch.cuda.device_count()))
             model = nn.DataParallel(model)
         model.to(device)
-
+    
+    text_features.to(device)
     model.eval()
 
     for n_iter, (img, pid, camid, camids, target_view, imgpath) in enumerate(val_loader):
