@@ -63,6 +63,7 @@ TEST:
   WEIGHT: ''
   NECK_FEAT: 'before'
   FEAT_NORM: 'yes'
+  TEXT: './output/fel_prompt/dim1/market1501/RN50_text.pth'
 
 DATASETS:
   NAMES: 'market1501'
