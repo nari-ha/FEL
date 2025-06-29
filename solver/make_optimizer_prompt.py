@@ -33,7 +33,7 @@ def make_optimizer_2stage(cfg, model, center_criterion):
             continue
         # image encoder freeze
         if cfg.SOLVER.STAGE2.TRAIN == 1:
-            if "image_encoder" in key:
+            if "visual" in key:
                 value.requires_grad_(False)
                 continue
         if not value.requires_grad:
