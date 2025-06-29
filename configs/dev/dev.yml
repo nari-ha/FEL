@@ -52,7 +52,7 @@ SOLVER:
     LOG_PERIOD: 50
     EVAL_PERIOD: 5
     BIAS_LR_FACTOR: 2
-    
+    TRAIN: 1 # image encoder freeze
     STEPS: [40, 70]
     GAMMA: 0.1
 
