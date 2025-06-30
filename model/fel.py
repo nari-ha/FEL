@@ -261,8 +261,29 @@ class BiMultiHeadAttention(nn.Module):
 
         attn_output_v = self.out_v_proj(attn_output_v)
         attn_output_l = self.out_l_proj(attn_output_l)
+        
+        # FFN
+    
+        
 
         return attn_output_v, attn_output_l
+
+
+# FFN (Feed-Forward Network) 클래스 추가
+class FFN(nn.Module):
+    def __init__(self, input_dim, hidden_dim, output_dim, dropout):
+        super().__init__()
+        self.fc1 = nn.Linear(input_dim, hidden_dim)
+        self.act = nn.GELU() 
+        self.fc2 = nn.Linear(hidden_dim, output_dim)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.act(x)
+        x = self.dropout(x)
+        x = self.fc2(x)
+        return x
 
 
 # Bi-Direction MHA (text->image, image->text)
@@ -289,28 +310,51 @@ class BiAttentionBlock(nn.Module):
         super(BiAttentionBlock, self).__init__()
 
         # pre layer norm
-        self.layer_norm_v = nn.LayerNorm(v_dim)
-        self.layer_norm_l = nn.LayerNorm(l_dim)
+        self.layer_norm_v1 = nn.LayerNorm(v_dim)
+        self.layer_norm_l1 = nn.LayerNorm(l_dim)
         self.attn = BiMultiHeadAttention(
             v_dim=v_dim, l_dim=l_dim, embed_dim=embed_dim, num_heads=num_heads, dropout=dropout
         )
 
         # add layer scale for training stability
         self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
-        self.gamma_v = nn.Parameter(init_values * torch.ones((v_dim)), requires_grad=True)
-        self.gamma_l = nn.Parameter(init_values * torch.ones((l_dim)), requires_grad=True)
+        self.gamma_v1 = nn.Parameter(init_values * torch.ones((v_dim)), requires_grad=True)
+        self.gamma_l1 = nn.Parameter(init_values * torch.ones((l_dim)), requires_grad=True)
+        
+        self.layer_norm_v2 = nn.LayerNorm(v_dim)
+        self.layer_norm_l2 = nn.LayerNorm(l_dim)
+        self.ffn_v = FFN(input_dim=v_dim, hidden_dim=v_dim * num_heads, output_dim=v_dim, dropout=dropout)
+        self.ffn_l = FFN(input_dim=v_dim, hidden_dim=v_dim * num_heads, output_dim=v_dim, dropout=dropout)
+        
+        self.gamma_v2 = nn.Parameter(init_values * torch.ones((v_dim)), requires_grad=True)
+        self.gamma_l2 = nn.Parameter(init_values * torch.ones((l_dim)), requires_grad=True)
 
     def forward(self, v, l, attention_mask_v=None, attention_mask_l=None):
         # v = self.layer_norm_v(v)
         # l = self.layer_norm_l(l)
+        norm_v = self.layer_norm_v1(v)
+        norm_l = self.layer_norm_l1(l)
+        
         delta_v, delta_l = self.attn(
-            v, l, attention_mask_v=attention_mask_v, attention_mask_l=attention_mask_l
+            norm_v, norm_l, attention_mask_v=attention_mask_v, attention_mask_l=attention_mask_l
         )
         # v, l = v + delta_v, l + delta_l
-        v = v + self.drop_path(self.gamma_v * delta_v)
-        l = l + self.drop_path(self.gamma_l * delta_l)
-        v = self.layer_norm_v(v)
-        l = self.layer_norm_l(l)
+        v = v + self.drop_path(self.gamma_v1 * delta_v)
+        l = l + self.drop_path(self.gamma_l1 * delta_l)
+        
+        norm_v_ffn = self.layer_norm_v2(v)
+        norm_l_ffn = self.layer_norm_l2(l)
+
+        delta_v_ffn = self.ffn_v(norm_v_ffn)
+        delta_l_ffn = self.ffn_l(norm_l_ffn)
+        print(max(delta_v_ffn))
+        
+        v = v + self.drop_path(self.gamma_v2 * delta_v_ffn)
+        l = l + self.drop_path(self.gamma_l2 * delta_l_ffn)
+        # v = v + self.drop_path(self.gamma_v2 * delta_v_ffn)
+        # l = self.layer_norm_l(l)
+        
+        
         return v, l
 
     # def forward(self, v:List[torch.Tensor], l, attention_mask_v=None, attention_mask_l=None)
