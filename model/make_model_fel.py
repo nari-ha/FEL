@@ -152,7 +152,7 @@ class build_transformer(nn.Module):
         self.prompt_learner = PromptLearner(num_classes, self.dataset_name, self.clip_model.dtype, self.clip_model.token_embedding)
         self.text_encoder = TextEncoder(self.clip_model)
 
-    def forward(self, x = None, label=None, get_image = False, get_text = False, t_feat = None, cam_label= None, view_label=None):
+    def forward(self, x = None, label=None, get_image = False, get_text = False, t_feat = None, cam_label= None, view_label=None, get_feat = False):
         if get_text == True:
             prompts = self.prompt_learner(label)
             text_features = self.text_encoder(prompts, self.prompt_learner.tokenized_prompts)
@@ -226,7 +226,10 @@ class build_transformer(nn.Module):
         if self.training:
             cls_score = self.classifier(feat)
             cls_score_proj = self.classifier_proj(feat_proj)
-            return [cls_score, cls_score_proj], [img_feature_last, img_feature, img_feature_proj], img_feature_proj
+            if get_feat == True:
+                return [cls_score, cls_score_proj], [img_feature_last, img_feature, img_feature_proj], img_feature_proj, text_features.squeeze(0)
+            else:    
+                return [cls_score, cls_score_proj], [img_feature_last, img_feature, img_feature_proj], img_feature_proj
 
         else:
             if self.neck_feat == 'after':
