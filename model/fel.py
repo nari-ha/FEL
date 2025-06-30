@@ -347,7 +347,7 @@ class BiAttentionBlock(nn.Module):
 
         delta_v_ffn = self.ffn_v(norm_v_ffn)
         delta_l_ffn = self.ffn_l(norm_l_ffn)
-        print(max(delta_v_ffn))
+        # print(max(delta_v_ffn))
         
         v = v + self.drop_path(self.gamma_v2 * delta_v_ffn)
         l = l + self.drop_path(self.gamma_l2 * delta_l_ffn)

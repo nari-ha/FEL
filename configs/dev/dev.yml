@@ -52,7 +52,7 @@ SOLVER:
     LOG_PERIOD: 50
     EVAL_PERIOD: 5
     BIAS_LR_FACTOR: 2
-    TRAIN: 1 # image encoder freeze
+    TRAIN: 1 # 0: image encoder is learnable 1: image encoder is frozen
     STEPS: [40, 70]
     GAMMA: 0.1
 
