@@ -112,7 +112,6 @@ def do_train_stage2(cfg,
                     loss = loss_fn(score, feat, target, target_cam, logits)
                 elif cfg.SOLVER.STAGE2.FEAT == 1:
                     score, feat, image_features, text_features = model(x = img, label = target, cam_label=target_cam, view_label=target_view, t_feat = text_features, get_feat = True)
-                    bp()
                     logits = image_features @ text_features.t()
                     loss = loss_fn(score, feat, target, target_cam, logits)
 
