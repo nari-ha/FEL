@@ -52,8 +52,8 @@ SOLVER:
     LOG_PERIOD: 50
     EVAL_PERIOD: 5
     BIAS_LR_FACTOR: 2
-    TRAIN: 1 # 0: image encoder is learnable 1: image encoder is frozen
-    FEAT: 1 # how to get i2tce loss 0: FEL 1: TTI
+    TRAIN: 0 # 0: image encoder is learnable 1: image encoder is frozen
+    FEAT: 0 # how to get i2tce loss 0: FEL 1: TTI
     STEPS: [40, 70]
     GAMMA: 0.1
 
