@@ -227,7 +227,8 @@ class build_transformer(nn.Module):
             cls_score = self.classifier(feat)
             cls_score_proj = self.classifier_proj(feat_proj)
             if get_feat == True:
-                return [cls_score, cls_score_proj], [img_feature_last, img_feature, img_feature_proj], img_feature_proj, text_features.squeeze(0)
+                text_features = torch.mean(text_features, dim=0)
+                return [cls_score, cls_score_proj], [img_feature_last, img_feature, img_feature_proj], img_feature_proj, text_features
             else:    
                 return [cls_score, cls_score_proj], [img_feature_last, img_feature, img_feature_proj], img_feature_proj
 
