@@ -52,8 +52,8 @@ SOLVER:
     LOG_PERIOD: 50
     EVAL_PERIOD: 20
     BIAS_LR_FACTOR: 2
-    TRAIN: 0 # 0이면 image encoder learnable, 1이면 image encoder freeze
-    FEAT: 1 # how to get i2tce loss 0: FEL 1: TTI
+    TRAIN: 1 # 0이면 image encoder learnable, 1이면 image encoder freeze
+    FEAT: 0 # how to get i2tce loss 0: FEL 1: TTI
     STEPS: [40, 70]
     GAMMA: 0.1
 
@@ -70,6 +70,6 @@ DATASETS:
   NAMES: 'market1501'
   EVAL: 'market1501'
   ROOT_DIR: './../dataset'
-OUTPUT_DIR: './output/fel_prompt/fel/4' # dim 1024 embed 512 head 4 encoder 얼리고 TTI loss
+OUTPUT_DIR: './output/fel_prompt/fel/5' # dim 1024 embed 1024 head 4 encoder 안얼리고 FEL loss
 
 # CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml
