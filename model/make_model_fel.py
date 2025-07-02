@@ -193,7 +193,7 @@ class build_transformer(nn.Module):
         if t_feat is not None:
             l_feature = t_feat.unsqueeze(0).expand(img_feature.shape[0], -1, -1)
             v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
-            # v_feature, l_feature = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+            v_feature, l_feature = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
             # v_feature, l_feature = self.feature_enhancer_layer2(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
             img_features, text_features = self.feature_enhancer_layer3(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
             img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
