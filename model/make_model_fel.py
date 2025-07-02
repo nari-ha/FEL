@@ -131,6 +131,14 @@ class build_transformer(nn.Module):
                 dropout=0.1,
                 drop_path=0.0,
         )
+        self.feature_enhancer_layer4 = BiAttentionBlock(
+                v_dim=self.in_planes_proj,
+                l_dim=self.in_planes_proj,
+                embed_dim=self.in_planes_proj,
+                num_heads=4,
+                dropout=0.1,
+                drop_path=0.0,
+        )
 
         if cfg.MODEL.SIE_CAMERA and cfg.MODEL.SIE_VIEW:
             self.cv_embed = nn.Parameter(torch.zeros(camera_num * view_num, self.in_planes))
@@ -195,7 +203,8 @@ class build_transformer(nn.Module):
             v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
             v_feature, l_feature = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
             v_feature, l_feature = self.feature_enhancer_layer2(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-            img_features, text_features = self.feature_enhancer_layer3(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+            v_feature, l_feature = self.feature_enhancer_layer3(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+            img_features, text_features = self.feature_enhancer_layer4(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
             img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
             
         # if get_feat == True:
