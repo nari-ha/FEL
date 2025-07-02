@@ -70,6 +70,6 @@ DATASETS:
   NAMES: 'market1501'
   EVAL: 'market1501'
   ROOT_DIR: './../dataset'
-OUTPUT_DIR: './output/fel_prompt/fel/7' # dim 1024 embed 1024 head 4 encoder 안얼리고 FEL loss
+OUTPUT_DIR: './output/fel_prompt/fel/8' # dim 1024 embed 1024 head 4 encoder 안얼리고 FEL loss
 
 # CUDA_VISIBLE_DEVICES=1 python train_clipreid.py --config_file configs/person/res_clipreid.yml
