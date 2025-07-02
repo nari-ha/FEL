@@ -68,7 +68,7 @@ TEST:
 
 DATASETS:
   NAMES: 'market1501'
-  EVAL: 'market1501'
+  EVAL: 'msmt17'
   ROOT_DIR: './../dataset'
 OUTPUT_DIR: './output/fel_prompt/fel/5' # dim 1024 embed 1024 head 4 encoder 안얼리고 FEL loss
 
