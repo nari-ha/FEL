@@ -123,38 +123,6 @@ class build_transformer(nn.Module):
                 dropout=0.1,
                 drop_path=0.0,
         )
-        self.feature_enhancer_layer3 = BiAttentionBlock(
-                v_dim=self.in_planes_proj,
-                l_dim=self.in_planes_proj,
-                embed_dim=self.in_planes_proj,
-                num_heads=4,
-                dropout=0.1,
-                drop_path=0.0,
-        )
-        self.feature_enhancer_layer4 = BiAttentionBlock(
-                v_dim=self.in_planes_proj,
-                l_dim=self.in_planes_proj,
-                embed_dim=self.in_planes_proj,
-                num_heads=4,
-                dropout=0.1,
-                drop_path=0.0,
-        )
-        self.feature_enhancer_layer5 = BiAttentionBlock(
-                v_dim=self.in_planes_proj,
-                l_dim=self.in_planes_proj,
-                embed_dim=self.in_planes_proj,
-                num_heads=4,
-                dropout=0.1,
-                drop_path=0.0,
-        )
-        self.feature_enhancer_layer6 = BiAttentionBlock(
-                v_dim=self.in_planes_proj,
-                l_dim=self.in_planes_proj,
-                embed_dim=self.in_planes_proj,
-                num_heads=4,
-                dropout=0.1,
-                drop_path=0.0,
-        )
 
         if cfg.MODEL.SIE_CAMERA and cfg.MODEL.SIE_VIEW:
             self.cv_embed = nn.Parameter(torch.zeros(camera_num * view_num, self.in_planes))
@@ -168,8 +136,7 @@ class build_transformer(nn.Module):
             self.cv_embed = nn.Parameter(torch.zeros(view_num, self.in_planes))
             trunc_normal_(self.cv_embed, std=.02)
             print('camera number is : {}'.format(view_num))
-            
-        # camera num 중요도 확인한다음에 걍없애도되는지 
+        
 
         self.dataset_name = cfg.DATASETS.NAMES
         self.eval_name = cfg.DATASETS.EVAL
@@ -195,7 +162,6 @@ class build_transformer(nn.Module):
             img_feature = nn.functional.avg_pool2d(image_features, image_features.shape[2:4]).view(x.shape[0], -1) # 2048
             img_feature_proj = image_features_proj[0] # 1024
 
-
         elif self.model_name == 'ViT-B-16':
             if cam_label != None and view_label!=None:
                 cv_embed = self.sie_coe * self.cv_embed[cam_label * self.view_num + view_label]
@@ -211,40 +177,14 @@ class build_transformer(nn.Module):
             img_feature_proj = image_features_proj[:,0]
             
         img_feat = self.mlp(img_feature) # 2048 > 1024
-        # img_feat_last = self.mlp2(img_feature_last) # 1024 > 2048
-        # img_feat_proj = self.mlp2(img_feature_proj) # 1024 > 2048
-
+        
         if t_feat is not None:
             l_feature = t_feat.unsqueeze(0).expand(img_feature.shape[0], -1, -1)
             v_feature = torch.stack([img_feat, img_feature_last, img_feature_proj], dim=1)
             v_feature, l_feature = self.feature_enhancer_layer1(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-            v_feature, l_feature = self.feature_enhancer_layer2(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-            v_feature, l_feature = self.feature_enhancer_layer3(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-            v_feature, l_feature = self.feature_enhancer_layer4(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-            v_feature, l_feature = self.feature_enhancer_layer5(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
-            img_features, text_features = self.feature_enhancer_layer6(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
+            img_features, text_features = self.feature_enhancer_layer2(v=v_feature, l=l_feature, attention_mask_v=None, attention_mask_l=None)
             img_feature, img_feature_last, img_feature_proj = torch.unbind(img_features, dim=1)
             
-        # if get_feat == True:
-            # if self.eval_name == "veri":
-            #     text = "A photo of a vehicle."
-            # else:
-            #     text = "A photo of a person."
-            # tokens = _tokenizer.encode(text)
-            # padded_tokens = tokens + [0] * (77 - len(tokens))
-            # text = torch.tensor([padded_tokens]).cuda()
-        #     text_features = self.clip_model.encode_text(text)
-        #     text_features = text_features.repeat(img_feature_proj.size()[0], 1)
-        #     text_features = text_features.unsqueeze(1)
-        #     img_feature_proj = img_feature_proj.unsqueeze(1)  # [B, 1, D]
-            
-        #     img_feature_proj, text_features = self.feature_enhancer_layer(
-        #         v=img_feature_proj, l=text_features, attention_mask_v=None, attention_mask_l=None
-        #     )
-        #     img_feature_proj = img_feature_proj.squeeze(1)  # [B, D]
-
-        # img_feature_last = self.mlp(img_feature_last) # 2048 > 1024
-        # img_feature_proj = self.mlp(img_feature_proj) # 2048 > 1024
         img_feature = self.mlp2(img_feature) # 1024 > 2048
         
         feat = self.bottleneck(img_feature)
